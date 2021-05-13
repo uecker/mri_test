@@ -11,6 +11,10 @@ This material will be presented at the ISMRM Annual Meeting 2021.
 This folder contains standalone demos that show different BART use cases. The demos are self-documented within
 each directory, and are summarized below. Each tutorial is set up as jupyter notebook and can interactively be tested using Google Colaboratory.
 
+- Neural Networks in BART (Non-Final)
+  - [Jupyter Notebook](./neural_networks/bart_neural_networks.ipynb)
+  - [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mrirecon/bart-workshop/blob/master/ismrm2021/neural_networks/bart_neural_networks.ipynb)
+
 - **Others**: How to Run BART on Google Colaboratory
   - [Jupyter Notebook](./bart_on_colab/colab_gpu_tutorial.ipynb)
   - [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mrirecon/bart-workshop/blob/master/ismrm2021/bart_on_colab/colab_gpu_tutorial.ipynb)
