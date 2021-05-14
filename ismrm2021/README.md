@@ -16,6 +16,10 @@ each directory, and are summarized below. Each tutorial is set up as jupyter not
   - [Jupyter Notebook](./model_based/bart_moba.ipynb)
   - [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mrirecon/bart-workshop/blob/master/ismrm2021/model_based/bart_moba.ipynb)
 
+- TensorFlow-Regularizer + BART Reconstruction
+  - [Jupyter Notebook](./bart_tensorflow/bart_tf.ipynb)
+  - [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mrirecon/bart-workshop/blob/master/ismrm2021/bart_tensorflow/bart_tf.ipynb)
+
 - Neural Networks in BART
   - [Jupyter Notebook](./neural_networks/bart_neural_networks.ipynb)
   - [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mrirecon/bart-workshop/blob/master/ismrm2021/neural_networks/bart_neural_networks.ipynb)
