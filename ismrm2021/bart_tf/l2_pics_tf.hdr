@@ -1,8 +1,0 @@
-# Dimensions
-256 256 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
-# Command
-pics -i100 -R TF:{/home/gluo/ISMRM/bart-workshop/ismrm2021/bart_tf/l2_toy}:0.01 -d5 -e -t traj_256_c ksp_256_c coilsen_esp l2_pics_tf 
-# Files
- >l2_pics_tf <coilsen_esp <ksp_256_c <traj_256_c
-# Creator
-BART v0.7.00-88-g9d66c09
