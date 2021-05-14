@@ -1,1 +1,1 @@
-rm coilsen_esp.* grid_ksp.* weights.* w_pics_prior.* zero_filled.* l2_toy.* ksp_256_c.* traj_256_c.* l2_pics.* l2_toy_gpu_id checkpoint
+rm -r *.cfl *.hdr l2_toy.* l2_toy_gpu_id checkpoint prior utils.py
