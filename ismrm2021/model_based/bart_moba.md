@@ -237,7 +237,7 @@ The data preparation is dicussed in detail in the [3rd event of the BART webinar
 2.3 Prepare radial trajectory (golden-angle) including gradient-delay correction  
 2.4 Prepare time vector
 
-which should not be mentioned in detail here.
+which are not mentioned in detail here.
 <!-- #endregion -->
 
 #### 2.1 Download Raw Data
@@ -340,8 +340,14 @@ head -n2 TI.hdr''
 ```
 
 <!-- #region id="jaQzsLuAyuNe" -->
-### 3. Nonlinear Model-based Reconstruction
-3.1 Model-based reconstruction
+## 3. Nonlinear Model-based Reconstruction
+
+The full nonlinear reconstruction can be applied to data by using only the `moba` command in the BART CLI. No coil sensitivity information is necessary, because they are jointly estimated.
+
+#### 3.1 Reconstruction
+A detailed description of the reconstruction can be also found in the [3rd event of the BART webinar series](https://github.com/mrirecon/bart-webinars/tree/master/webinar3).
+
+Here we apply a non-linear inversion-recovery Look-Locker model `-L` to our single-shot data. We also exploit compressed sensing by adding a wavelet $l_1$ regularization with the `-l1` flag.
 <!-- #endregion -->
 
 ```python colab={"base_uri": "https://localhost:8080/"} id="UhHVvVzayuNe" outputId="34652ab3-d75f-4261-c902-30d39556cdc2"
@@ -362,7 +368,9 @@ head -n2 TI.hdr''
 ```
 
 <!-- #region id="qfvQ9Li1O52S" -->
-3.2 Visualize results
+#### 3.2 Visualize results
+
+To visualize the output of the reconstruction we resize it and thus remove the applied oversampling. Additionally, we slice the individual maps out of its original file and place them next to each other for the final visualization.
 <!-- #endregion -->
 
 ```python colab={"base_uri": "https://localhost:8080/", "height": 368} id="ug79lA2NyuNe" outputId="255cfc92-27d6-4c4c-cf7a-31d5a62ede0b"
@@ -383,7 +391,8 @@ Image("maps_all.png", width=1000)
 ```
 
 <!-- #region id="lY7X_ELPyuNf" -->
-Finally, from the above parameters, we can calculate and visualize the estimated T1 map.
+The output of the nonlinear Look-Locker model-based reconstruction are the parameter maps Mss, M0 and R1*.  
+To estimate the desired T1 map we pass the reconstruction results to the `looklocker` command and visualize the T1 map here.
 <!-- #endregion -->
 
 ```python colab={"base_uri": "https://localhost:8080/", "height": 467} id="uj6WjnWOyuNf" outputId="277688a3-83e8-48f5-ab51-64ba23fe04e6"
@@ -393,10 +402,6 @@ Finally, from the above parameters, we can calculate and visualize the estimated
 !python3 save_maps.py moba_T1map viridis 0 2.0 moba_T1map.png
 Image("moba_T1map.png", width=600)
 ```
-
-<!-- #region id="nDmp8EroyuNf" -->
-Thank you for joining! Feel free to ask any questions:)
-<!-- #endregion -->
 
 <!-- #region id="FbOHw18nyuNg" -->
 # Part II. Model-based Reconstruction on Multi-Echo Radial FLASH
