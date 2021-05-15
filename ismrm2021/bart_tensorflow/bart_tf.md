@@ -108,7 +108,13 @@ x = x * v
 ```
 
 <!-- #region id="8e2719ae" -->
-### Step 2: Define Output $R(x)=\|x\|^2$
+### Step 2: Set Output to TF's l2 Loss
+
+In the later following reconstruction example we want to validate the exploitation of TF graphs in BART on a l2 regularization example. 
+
+Therefore, we are going to compare a reconstruction with the internal l2 loss of the `pics` tool to the result using a TF graph.
+
+The required graph is now set to have TF's l2 loss as an output.
 <!-- #endregion -->
 
 ```python id="f2920129"
@@ -119,7 +125,9 @@ output = tf.identity(tf.stack([l2, tf.ones_like(l2)], axis=-1), name='output_0')
 ```
 
 <!-- #region id="6e8f00fa" -->
-### Step 3: Define the Gradient of $R(x)=\|x\|^2$
+### Step 3: Define the Gradient of TF's l2 Loss
+
+For being able to use the TF graph as a regularization inside of a larger ierative optimization algorithm, we need to know its gradients, whcih are defined in the following.
 <!-- #endregion -->
 
 ```python id="2d24fc05"
@@ -133,14 +141,20 @@ grads = tf.squeeze(tf.gradients(output, x, grad_ys), name='grad_0')
 
 <!-- #region id="88c848b3" -->
 ### Step 4: Export the Graph and Weights
+
+The created l2 loss graph needs to be stored in BART understandable format, which allows us to pass it to `pics` CLI. Therefore, we exploit the `export_model` function.
 <!-- #endregion -->
 
 ```python colab={"base_uri": "https://localhost:8080/"} id="b0acc0c0" outputId="097bcdc1-597e-44d1-dd6c-3f72af686631"
 from utils import export_model
-# export_model(model_path, exported_path, name, as_text, use_gpu):
+
+# Definition of function:
+#         export_model(model_path, exported_path, name, as_text, use_gpu):
 
 export_model(None, "./", "l2_toy", as_text=False, use_gpu=False)
 ```
+
+Let us have a look how the exported files look like.
 
 ```python colab={"base_uri": "https://localhost:8080/"} id="49f7dc3f" outputId="e1ba81ad-466e-4025-cc2d-b1bd909b1052"
 !ls
@@ -237,9 +251,12 @@ In the second step we have a look into the help for BART's regularization option
 ```
 
 <!-- #region id="dd4b2e2a" -->
-proximal operation on $R(x)$
+You can find a list of regularization terms $R(x)$, which can be added to the optimization of
+$$
+\hat{x}=\underset{x}{\arg \min} \|x-v\|^2 + \lambda R(x)
+$$
 
-$$\hat{x}=\underset{x}{\arg \min} \|x-v\|^2 + \lambda R(x)$$
+To integrate a TF graph as regularization term in `pics` use the notation `-R TF:{graph_path}:lambda`.
 <!-- #endregion -->
 
 <!-- #region id="0e14c927" -->
@@ -281,18 +298,26 @@ bart ecalib -r20 -m1 -c0.0001 grid_ksp coilsen_esp
 ```
 
 <!-- #region id="3fcd3a99" -->
-## Example 1: $R(x)=\|x\|^2$
+## Example 1: TF Graph as l2 Regularization
 <!-- #endregion -->
 
-Use the tf graph as an l2 regularization term, and compare with built-in l2.
+In this first example we use the TF graph as an l2 regularization term. We pass the TF graph following the `-R TF:{graph_path}:lambda` notation for `pics` regularization terms.
 
 ```python id="334b8029"
+# Reconstruct with TF Graph as l2 regularization
+
 !bart pics -i100 -R TF:{$(pwd)/l2_toy}:0.02 -d5 -e -t traj_256_c ksp_256_c coilsen_esp l2_pics_tf
 ```
 
+After reconstructing the dataset with the TF graph as loss we validate it by comparison to the built-in l2 regularization in `pics` called by adding the `-l2` flag to the CLI call.
+
 ```python id="4d9f2471"
+# Reconstruct with built-in l2 regularization
+
 !bart pics -l2 0.01 -e -d5 -t traj_256_c ksp_256_c coilsen_esp l2_pics
 ```
+
+For an improved comparison we visualize them next to each other.
 
 ```python id="029c7626"
 from utils import *
