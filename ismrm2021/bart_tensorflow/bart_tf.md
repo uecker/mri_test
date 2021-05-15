@@ -7,29 +7,32 @@ jupyter:
       format_version: '1.2'
       jupytext_version: 1.6.0
   kernelspec:
-    display_name: Python [conda env:tf15] *
+    display_name: Python 3
     language: python
-    name: conda-env-tf15-py
+    name: python3
 ---
 
 <!-- #region id="11904043" -->
-# Enhance bart with tf computation graph
+# Enhance BART with a TF Computation Graph
 
-**Authors**: [Guanxiong Luo](mailto:guanxiong.luo@med.uni-goettingen.de); [Nick Scholand](mailto:nick.scholand@med.uni-goettingen.de); [Christian Holme](mailto:christian.holme@med.uni-goettingen.de).
+**Authors**: [Guanxiong Luo](mailto:guanxiong.luo@med.uni-goettingen.de), [Nick Scholand](mailto:nick.scholand@med.uni-goettingen.de), [Christian Holme](mailto:christian.holme@med.uni-goettingen.de)
 
-**Presenter**: [Guanxiong Luo](mailto:guanxiong.luo@med.uni-goettingen.de).
+**Presenter**: [Guanxiong Luo](mailto:guanxiong.luo@med.uni-goettingen.de)
 
 **Institution**: University Medical Center Göttingen
 
+**Reference**:
+> Luo, G, Blumenthal, M, Uecker, M. Using data-driven image priors for image reconstruction with BART Proc. Intl. Soc. Mag. Reson. Med. 29 (2021) P.1756
+
 ## Overview
-This tutorial is to present how to create regularization term with tensorflow and use it for image reconstruction in bart.
+This tutorial is to present how to create a regularization term with tensorflow and use it for image reconstruction in [BART](https://github.com/mrirecon/bart).
 
 <img src="over.png" width="800"/>
 
 ## What we have
-TensorFlow provides C API that can be used to build bindings for other languages. 
+TensorFlow provides a C API that can be used to build bindings for other languages. 
 
-1. bart src/nn/tf_wrapper.c
+1. BART src/nn/tf_wrapper.c
 
     * create tensors, create tf session
 
@@ -48,7 +51,7 @@ TensorFlow provides C API that can be used to build bindings for other languages
 
 ## What you can do with tf graph
 
-1. we can create the regularization term $R(x)$ with tf graph for image reconstruction (integrated in bart pics).
+> We can create the regularization term $R(x)$ with tf graph for image reconstruction (integrated in BART's `pics` tool).
 
 $$\underset{x}{\arg \min}\ \|Ax-y\|^2+\lambda R(x)$$
 
@@ -58,14 +61,13 @@ $$\underset{x}{\arg \min}\ \|Ax-y\|^2+\lambda R(x)$$
 
 2. $R(x)=\log p(x, net(\Theta,x))$ with trainable weights $\Theta$, $net$ is represented as a prior [1]
 
-[1] Luo, G, Zhao, N, Jiang, W, Hui, ES, Cao, P. MRI reconstruction using deep Bayesian estimation. Magn Reson Med. 2020; 84: 2246– 2261. https://doi.org/10.1002/mrm.28274 <br />
-[2] Luo, G, Blumenthal, M, Uecker, M. Using data-driven image priors for image reconstruction with BART Proc. Intl. Soc. Mag. Reson. Med. 29 (2021) P.1756
+[1] Luo, G, Zhao, N, Jiang, W, Hui, ES, Cao, P. MRI reconstruction using deep Bayesian estimation. Magn Reson Med. 2020; 84: 2246– 2261. https://doi.org/10.1002/mrm.28274
 <!-- #endregion -->
 
 ## Part 0: Fetch data
 
 
-To follow up this tutorial, please download the data which contains radial k-space spokes, trained model and some python functions
+To follow up this tutorial, please download the data which contains radial k-space spokes, a trained model and some python functions
 
 ```python
 ! wget -q https://raw.githubusercontent.com/mrirecon/bart-workshop/master/ismrm2021/bart_tensorflow/data.zip
