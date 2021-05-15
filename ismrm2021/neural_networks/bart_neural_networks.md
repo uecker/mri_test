@@ -17,7 +17,7 @@ jupyter:
 # ISMRM 2021 Software Demo: 
 ## Neural Networks in BART
 
-This tutorial uses the BART command-line inteface (CLI) (http://mrirecon.github.io/bart/) and presents how to train and apply predefined neural networks using BART.
+This tutorial uses the [BART](http://mrirecon.github.io/bart/) command-line inteface (CLI) and presents how to train and apply predefined neural networks using BART.
 
 + **PART I**: Simple example network for MNIST dataset
  1. Prepare dataset
@@ -30,9 +30,9 @@ This tutorial uses the BART command-line inteface (CLI) (http://mrirecon.github.
  1. Prepare dataset
  2. Apply network
 
-**Authors**: [Moritz Blumenthal](mailto:moritz.blumenthal@med.uni-goettingen.de); [Nick Scholand](mailto:nick.scholand@med.uni-goettingen.de); [Christian Holme](mailto:christian.holme@med.uni-goettingen.de).
+**Authors**: [Moritz Blumenthal](mailto:moritz.blumenthal@med.uni-goettingen.de), [Nick Scholand](mailto:nick.scholand@med.uni-goettingen.de), [Christian Holme](mailto:christian.holme@med.uni-goettingen.de)
 
-**Presenter**: [Moritz Blumenthal](mailto:moritz.blumenthal@med.uni-goettingen.de).
+**Presenter**: [Moritz Blumenthal](mailto:moritz.blumenthal@med.uni-goettingen.de)
 
 **Institution**: University Medical Center Göttingen
 <!-- #endregion -->
@@ -47,13 +47,16 @@ This tutorial uses the BART command-line inteface (CLI) (http://mrirecon.github.
 If you run this notebook on your local machine, make sure that **TOOLBOX_PATH** points to your BART directory and that your local BART follows the branch **nn_ismrm2021**.
 
 For fast inference and training on the CPU, we recommend to compile with the compile flags:
-* OPENBLAS=1 - to directly link against OpenBLAS and not the system BLAS library
-* BLAS_THREADSAFE=1 - to allow calling BLAS from multiple threads in parallel (which might give race conditions for some BLAS libraries)
+* `OPENBLAS=1` - to directly link against OpenBLAS and not the system BLAS library
+* `BLAS_THREADSAFE=1` - to allow calling BLAS from multiple threads in parallel (which might give race conditions for some BLAS libraries)
 
-Depending on your system, it might be usefull to restrict the number of threads to the number of physical cores by setting **OMP_NUM_THREADS**.
+Depending on your system, it might be usefull to restrict the number of threads to the number of physical cores by setting `OMP_NUM_THREADS`.
+
+For this talk I will use my local machine, where BART is preinstalled with the options mentioned above. The following cells define the necessary environmental variables for running BART for me locally.
 <!-- #endregion -->
 
 ```python id="jOpINkR2O2eN" outputId="5d7dfa89-a6df-493d-85d1-aa71a611fda8" colab={"base_uri": "https://localhost:8080/"}
+# Set environmental variables for MY LOCAL MACHINE
 %env TOOLBOX_PATH=/home/moritz/Bart/bart
 %env OMP_NUM_THREADS=4
 ```
@@ -61,7 +64,8 @@ Depending on your system, it might be usefull to restrict the number of threads 
 <!-- #region id="UaQk0TTVO2eO" -->
 ### 0.1b BART on Google Colab
 
-The next cells will setup BART on Google Colab. For a detailed explanation, see the **How to Run BART on Google Colaboratory** in this repository. Skip this cells if you want to run this notebook on your local machine.
+The next cells will setup BART on Google Colab. For a detailed explanation, see the [How to Run BART on Google Colaboratory](https://github.com/mrirecon/bart-workshop/tree/master/ismrm2021).  
+Skip this cells if you want to run this notebook on your local machine.
 
 This tutorial does not need a GPU instance, but you can use one:
 
@@ -70,14 +74,9 @@ This tutorial does not need a GPU instance, but you can use one:
 
 <!-- #endregion -->
 
-```python id="JPQTTNcg6LFv" outputId="4e9edcf4-d399-4fe8-ffc2-7febf47effc0" colab={"base_uri": "https://localhost:8080/"}
-%env TOOLBOX_PATH=/content/bart
-```
-
 ```bash id="DzWLkUC9PWoW" outputId="eb9ca5a2-f8d0-41f3-9cfe-2951a9396439" colab={"base_uri": "https://localhost:8080/"}
 
 # Use CUDA 10.1 when on Tesla K80
-
 
 # Estimate GPU Type
 GPU_NAME=$(nvidia-smi --query-gpu=gpu_name --format=csv,noheader)
@@ -139,8 +138,14 @@ make &> /dev/null
 <!-- #region id="iCwkW7baO2eQ" -->
 ### 0.2 Set Environment for BART
 
-After downloading and compiling BART, the next step simplifies the handling of BARTs command line interface inside of a ipyhton jupyter-notebook. We add the BART directory to the PATH variable and include the python wrapper for reading *.cfl files:
+After downloading and compiling BART, the next step simplifies the handling of BARTs command line interface inside of a ipyhton jupyter-notebook. We set the `TOOLBOX_PATH` variable,
 <!-- #endregion -->
+
+```python id="JPQTTNcg6LFv" outputId="4e9edcf4-d399-4fe8-ffc2-7febf47effc0" colab={"base_uri": "https://localhost:8080/"}
+%env TOOLBOX_PATH=/content/bart
+```
+
+add the BART directory to the PATH variable and include the python wrapper for reading *.cfl files:
 
 ```python id="9WCi0TsVO2eQ"
 import os
@@ -174,6 +179,7 @@ Together with this notebook, we provide some testing data and some pretrained we
 
 ```bash id="-CRtl8MpO2eR" outputId="90d6f437-059c-4f80-9135-a86f3060a06f" colab={"base_uri": "https://localhost:8080/"}
 
+# Download the required supporting material if it is not already there
 [ ! -f data_weights.zip ] && wget -q https://github.com/mrirecon/bart-workshop/raw/master/ismrm2021/neural_networks/data_weights.zip
 unzip -n data_weights.zip
 ```
@@ -187,7 +193,7 @@ $$ Net: (Image, Weights) \mapsto Labels $$
 
 ![](mnist_example.png)
 
-### BART nnet
+### `bart nnet`
 
 To **train**, **evaluate** or **apply** generic neural networks mapping one input tensor to one output tensor, we can use the `bart nnet` command. It creates a non-linear operator representing the network selected by the `--network` option. The command is provided three files, i.e.
 * the input;
@@ -210,7 +216,8 @@ bart nnet --network h
 <!-- #region id="MOUvjvZcO2eT" -->
 ## 1.1 Prepare MNIST Dataset
 
-Before we can train our network, we convert the MNIST dataset to the BART file format, i.e. the images are stored as complex floats. The labels are converted to one-hot encoded \*.cfl file. For this step. we provide a short python script, which is run in the next cell. For this tutorial, we also extract a smaller dataset based on the first 200 examples from the original MNIST dataset. We prefix the corresponding data with s*.
+Before we can train our network, we convert the MNIST dataset to the BART file format, i.e. the images are stored as complex floats. The labels are converted to one-hot encoded \*.cfl file. For this step we provide a short python script, which is called in the next cell.  
+In this tutorial, we also extract a smaller dataset based on the first 200 examples from the original MNIST dataset. We prefix the corresponding data with s*.
 <!-- #endregion -->
 
 ```bash id="KytWuLnUO2eU" outputId="0d7af311-9163-4c58-cc1d-567e79db32c2" colab={"base_uri": "https://localhost:8080/"}
@@ -264,13 +271,23 @@ print(np.real(labels.transpose([1, 0])))
 <!-- #region id="RHI8WeKdO2eW" -->
 ## 1.2 Train the MNIST Network
 
-When we train the network, we search the minium of $$Loss(Net(Image, Weights), Labels)$$ with respect to the weights. When we choose the `--train` option of the `bart nnet` command, we first create a non-linear operator (nlop) representing $Net(Image, Weights)$. This nlop is then chained into an nlop computing the $Loss$. To minimize the $Loss$, we use gradient based methods.
+When we train the network, we search for the minium of
+
+$$
+Loss(Net(Image, Weights), Labels)
+$$
+
+with respect to the weights. When we choose the `--train` option of the `bart nnet` command, we first create a non-linear operator (nlop) representing $Net(Image, Weights)$. This nlop is then chained into an nlop computing the $Loss$.  
+To minimize the $Loss$, we use gradient based methods.
 
 For visualization, we can export the nlop as a graph file using the `--export-graph` option:
 <!-- #endregion -->
 
 ```python id="oD4lxv8CO2eX" outputId="e9a76b07-ef7f-4644-e4b8-8de7da1f4d18" colab={"base_uri": "https://localhost:8080/", "height": 1000}
+# This command would create the visualization of the graph:
 #!dot -Tpng mnist.dot>mnist_graph.png
+
+# In this presentation we just want to display it
 display(Image(filename='mnist_graph.png'))
 ```
 
@@ -304,7 +321,7 @@ cat weights/mnist.hdr
 <!-- #region id="7_dXzYvYO2eZ" -->
 ## 1.3 Evaluate the MNIST Network
 
-To evaluate the trained network, we can apply it and compare with the reference using the `--eval` option:
+To evaluate the trained network, we apply it and compare the result with the reference using the `--eval` flag:
 <!-- #endregion -->
 
 ```bash id="bMEriyPQO2eZ" outputId="2fe5f20b-6f42-4db1-ace1-185876f5e831" colab={"base_uri": "https://localhost:8080/"}
@@ -322,7 +339,7 @@ For reasonable results, we need to train longer on the full dataset. We provide 
 <!-- #endregion -->
 
 ```python id="hWWuF5VIO2ea"
-#Train on larger dataset
+# Train on larger dataset
 
 #!bart nnet --train \
 #    --network=mnist \
@@ -335,6 +352,8 @@ For reasonable results, we need to train longer on the full dataset. We provide 
 
 ```bash id="SFT3WKLNO2ea" outputId="354898cc-0284-44fc-dc7a-7cb11e43fcfe" colab={"base_uri": "https://localhost:8080/"}
 
+# Evaluate the network trained on a larger dataset
+
 bart nnet \
     --eval \
     --network mnist \
@@ -346,7 +365,7 @@ bart nnet \
 <!-- #region id="nCaXweMvO2ea" -->
 ## 1.4 Apply the MNIST Network
 
-Finally, we can apply the network to predict labels using the `--apply` option. The one-hot encoded output is converted to integer encoded output by taking the entry with the maximum probability.
+Finally, we can apply the network to predict labels using the `--apply` option.
 <!-- #endregion -->
 
 ```bash id="PXf9xKG4O2eb"
@@ -357,11 +376,18 @@ bart nnet \
     data/stest_images \
     weights/mnist_pretrained \
     mnist_onehot
+```
+
+The one-hot encoded output is converted to an integer encoded output with the `onehotenc` tool by taking the entry with the maximum probability.
+
+```bash
 
 bart onehotenc -r \
     mnist_onehot \
     mnist_integer
 ```
+
+Let us have a look at the results.
 
 ```python id="yPc8WRMvO2eb" outputId="dd163750-25db-479e-e008-b6735669a6bd" colab={"base_uri": "https://localhost:8080/", "height": 557}
 !echo "Input Images:"
@@ -392,11 +418,13 @@ print(np.real(labels[:,:10]))
 ```
 
 <!-- #region id="REBOoE7YO2eb" -->
-# PART II: Reconstruction Networks - bart reconet
+# PART II: Reconstruction Networks - `bart reconet`
 
-Variational Network<sup>1</sup>:
+We already implemented
+
+> Variational Network<sup>1</sup>:
 $$ x^{(i)} = x^{(i-1)}  - \lambda \nabla||Ax -b||^2 + Net(x^{(i-1)}, \Theta^{(i)} )$$
-MoDL<sup>2</sup>:
+> MoDL<sup>2</sup>:
 $$
 \begin{align}
 z^{(i)} &= Net\left(x^{(i-1)}, \Theta \right)\\
@@ -404,7 +432,7 @@ x^{(i)} &= \mathrm{argmin}_x ||Ax -b||^2 + \lambda ||x - z^{(i)}||^2
 \end{align}
 $$
 
-Where
+>Where
 + $A$ - MRI forward operator $\mathcal{PFC}$
     + $\mathcal{P}$ - Sampling pattern
     + $\mathcal{F}$ - Fourier transform
@@ -414,9 +442,9 @@ Where
 + $x^{(0)}=A^Hb$ - initialization
 + $\Theta$ - Weights
 
-1: Hammernik, K. et al. (2018), [Learning a variational network for reconstruction of accelerated MRI data](https://doi.org/10.1002/mrm.26977). Magn. Reson. Med., 79: 3055-3071.
+>1: Hammernik, K. et al. (2018), [Learning a variational network for reconstruction of accelerated MRI data](https://doi.org/10.1002/mrm.26977). Magn. Reson. Med., 79: 3055-3071.
 
-2: Aggarwal, H. K. et al.(2019), [MoDL: Model-Based Deep Learning Architecture for Inverse Problems](https://doi.org/10.1109/TMI.2018.2865356). IEEE Trans. Med. Imag., 38(2): 394-405
+>2: Aggarwal, H. K. et al.(2019), [MoDL: Model-Based Deep Learning Architecture for Inverse Problems](https://doi.org/10.1109/TMI.2018.2865356). IEEE Trans. Med. Imag., 38(2): 394-405
 
 To **train**, **evaluate** or **apply** unrolled networks, we provide the `bart reconet` command. It follows the same logic as the `bart nnet` command but gets the coil sensitivity maps as an additional input. Let us look at the help:
 <!-- #endregion -->
@@ -434,7 +462,9 @@ bart reconet --network h
 <!-- #region id="kbsh6dJxO2ed" -->
 ## 2.1 Prepare the Knee-Data
 
-Here, we use the data provided with the publication of the Variational Network, i.e. the coronal_pd_fs folder of the NYU-Dataset. The data has been converted to the .cfl-file format. In the data folder, we find the fully sampled kspace-data of a knee and a sampling pattern. As the kspace is fully sampled, we can define a ground truth reference.
+Here, we use the data provided with the publication of the Variational Network, i.e. the coronal_pd_fs folder of the NYU-Dataset. The data has been converted to the .cfl-file format.  
+In the data folder, we find the fully-sampled kspace data of a knee and a sampling pattern. As the kspace is fully sampled, we can define a ground truth reference.
+
 Before we apply the networks, we will create/estimate:
 + the downsampled kspace
 + coil sensitivity maps
@@ -454,9 +484,9 @@ plt.show()
 ```
 
 <!-- #region id="Vv8x1C5GO2ed" -->
-### 2.1.1 Create downsampled kspace
+### 2.1.1 Create Downsampled Kspace
 
-We downsample the fully sampled kspace by multiplying with the sampling pattern:
+We downsample the fully-sampled kspace by multiplying it with the sampling pattern:
 <!-- #endregion -->
 
 ```bash id="7LFsYnyhO2ee"
@@ -465,7 +495,7 @@ bart fmac data/kspace_fs data/pattern_po_4 kspace
 ```
 
 <!-- #region id="DY3vjy41O2ee" -->
-### 2.1.2 Estimate coil sensitivity maps
+### 2.1.2 Estimate Coil Sensitivity Maps
 
 We estimate the coil sensitivity maps using ESPIRiT. 
 <!-- #endregion -->
@@ -477,9 +507,9 @@ bart resize -c 0 320 coils_l coils
 ```
 
 <!-- #region id="hOqL2XoOO2ee" -->
-### 2.1.3 Reconstruct Reference
+### 2.1.3 Reconstruction of the Reference
 
-We construct the **ground truth reference** as the coil-combinded reconstruction of the fully sampled kspace data. For comparison, we also compute a **l1-wavelet** regularized and the **zero-filled** reconstruction.
+We construct the **ground truth reference** as the coil-combinded reconstruction of the fully-sampled kspace data. For comparison, we also compute a **l1-wavelet** regularized and the **zero-filled** reconstruction.
 <!-- #endregion -->
 
 ```bash id="mGcZDnJrO2ef" outputId="338dca9f-2de5-414c-b7e1-602203edcf77" colab={"base_uri": "https://localhost:8080/"}
@@ -523,13 +553,13 @@ vmax=0.9*np.max(np.abs(ref))
 fig, axes = plt.subplots(figsize=(20,6), nrows=1, ncols=3, sharex=True, sharey=True)
 
 axes[0].imshow(np.abs(ref[::-1,::-1]), cmap="gray", vmax=vmax)
-axes[0].set_title("Coil Combined Reference")
+axes[0].set_title("Coil Combined Reference", fontsize=20)
 
 axes[1].imshow(np.abs(pics_reco[::-1,::-1]), cmap="gray", vmax=vmax)
-axes[1].set_title("l1-Wavelet Regularized")
+axes[1].set_title("l1-Wavelet Regularized", fontsize=20)
 
 axes[2].imshow(np.abs(zero_filled[::-1,::-1]), cmap="gray", vmax=vmax)
-axes[2].set_title("Zero-filled Reconstruction")
+axes[2].set_title("Zero-filled Reconstruction", fontsize=20)
 
 plt.tight_layout()
 plt.show()
@@ -538,7 +568,8 @@ plt.show()
 <!-- #region id="-rTVMrN9O2eg" -->
 ## 2.2 Apply Variational Network
 
-Having prepared the dataset, we can apply the Variational Network using the downloaded weights. The dataset is normalized by the maximum magnitude of the zero-filled reconstruction by the `--normalize` option. We use the pretrained weights provided in the weights directory. They have been trained on the first 15 knees from the coronal_pd_fs directory of the NYU-Dataset
+Having prepared the dataset, we can apply the Variational Network using the downloaded weights. The dataset is normalized by the maximum magnitude of the zero-filled reconstruction by using the `--normalize` option.  
+We use the pretrained weights provided in the weights directory. They have been trained on the first 15 knees from the coronal_pd_fs directory of the NYU-Dataset
 
 <!-- #endregion -->
 
@@ -572,13 +603,13 @@ vmax=0.9*np.max(np.abs(ref))
 fig, axes = plt.subplots(figsize=(20,6), nrows=1, ncols=3, sharex=True, sharey=True)
 
 axes[0].imshow(np.abs(ref[::-1,::-1]), cmap="gray", vmax=vmax)
-axes[0].set_title("Coil Combined Reference")
+axes[0].set_title("Coil Combined Reference", fontsize=20)
 
 axes[1].imshow(np.abs(pics_reco[::-1,::-1]), cmap="gray", vmax=vmax)
-axes[1].set_title("l1-Wavelet Regularized")
+axes[1].set_title("l1-Wavelet Regularized", fontsize=20)
 
 axes[2].imshow(np.abs(varnet[::-1,::-1]), cmap="gray", vmax=vmax)
-axes[2].set_title("Variational Network")
+axes[2].set_title("Variational Network", fontsize=20)
 
 plt.tight_layout()
 plt.show()
@@ -621,13 +652,13 @@ vmax=0.9*np.max(np.abs(ref))
 fig, axes = plt.subplots(figsize=(20,6), nrows=1, ncols=3, sharex=True, sharey=True)
 
 axes[0].imshow(np.abs(ref[::-1,::-1]), cmap="gray", vmax=vmax)
-axes[0].set_title("Coil Combined Reference")
+axes[0].set_title("Coil Combined Reference", fontsize=20)
 
 axes[1].imshow(np.abs(pics_reco[::-1,::-1]), cmap="gray", vmax=vmax)
-axes[1].set_title("l1-Wavelet Regularized")
+axes[1].set_title("l1-Wavelet Regularized", fontsize=20)
 
 axes[2].imshow(np.abs(modl[::-1,::-1]), cmap="gray", vmax=vmax)
-axes[2].set_title("MoDL")
+axes[2].set_title("MoDL", fontsize=20)
 
 plt.tight_layout()
 plt.show()
