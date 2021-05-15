@@ -2,8 +2,8 @@
 
 This material will be presented at the ISMRM Annual Meeting 2021.
 
-**Title**: Software Demos for MRI
-**Meeting**: [2021 ISMRM Annual Meeting, Online](https://www.ismrm.org/21m/)
+**Title**: Software Demos for MRI  
+**Meeting**: [2021 ISMRM Annual Meeting, Online](https://www.ismrm.org/21m/)  
 **Date**: May 16, 2021
 
 
