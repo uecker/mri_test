@@ -17,11 +17,11 @@ jupyter:
 ## ISMRM 2021 Software Demo: 
 ## Nonlinear Model-based Reconstruction for Quantitative MRI with BART
 
-This tutorial uses the BART command-line inteface (CLI) and presents how to perform nonlinear model-based reconstruction for quantitative MRI (T1 mapping, water/fat separation) using [BART](http://mrirecon.github.io/bart/).
+This tutorial uses the BART command-line inteface (CLI) and presents how to perform nonlinear model-based reconstruction for quantitative MRI (T1 mapping, water-fat separation) using [BART](http://mrirecon.github.io/bart/).
 
 **Main Reference**
 
-    Wang X, Tan Z, Scholand N, Roeloffs V, Uecker M. [Physics-based Reconstruction Methods for Magnetic Resonance Imaging](https://arxiv.org/abs/2010.01403) Philos Trans R Soc A 2021;379:20200196.
+Wang X, Tan Z, Scholand N, Roeloffs V, Uecker M. [Physics-based Reconstruction Methods for Magnetic Resonance Imaging](https://arxiv.org/abs/2010.01403) Philos Trans R Soc A 2021;379:20200196.
 
 **Authors**: [Xiaoqing Wang](mailto:xiaoqing.wang@med.uni-goettingen.de), [Zhengguo Tan](mailto:zhengguo.tan@med.uni-goettingen.de), [Nick Scholand](mailto:nick.scholand@med.uni-goettingen.de), [Christian Holme](mailto:christian.holme@med.uni-goettingen.de)
 
@@ -114,13 +114,12 @@ os.environ['OMP_NUM_THREADS']="4"
 
 os.environ['PATH'] = os.environ['TOOLBOX_PATH'] + ":" + os.environ['PATH']
 sys.path.append(os.environ['TOOLBOX_PATH'] + "/python")
-from IPython.display import Image
 ```
 
 <!-- #region id="NlXHp2WIyuNX" -->
 #### (0.2 Local machine) - OPTIONAL!
 
-**For** the **presentation** of this tutorial, I will run this notebook on my local machine. I have BART already installed and will define the required environmental variables.
+Alternatively, this notebook can run on local machines. In this case, we need to define the required environmental variables.
 <!-- #endregion -->
 
 ```python id="5-Q-zakdyuNX" outputId="77a0372e-e3e9-42f9-b19f-8bec809909e2"
@@ -134,7 +133,8 @@ os.environ["PATH"] = os.getenv("TOOLBOX_PATH") + os.pathsep + os.getenv("PATH")
 
 Let us check the installes BART version.
 
-```python magic_args="bash"
+```bash
+
 echo "# The BART used in this notebook:"
 which bart
 echo "# BART version: "
@@ -144,7 +144,7 @@ bart version
 <a id='download-materials'></a>
 ### Download Supporting Materials
 
-For this tutorial we need some supporting materials for plotting and precomputed data. To run comfortable on Google Colab, we stored them in our GitHub repository and download them from there.
+For this tutorial, we do need several supporting materials (figures, plotting scripts and compressed data for mult-echo radial FLASH). They are stored in the GitHub repository and need to be downloaded.
 
 ```bash
 
@@ -170,7 +170,7 @@ unzip -n bart_moba.zip
 <!-- #region id="fFjPTwiXyuNZ" -->
 **General Idea of Model-based Reconstruction**:
 
-    Formulating the estimation of MR physical parameters directly from k-space as a nonlinear inverse problem
+   Formulating the estimation of MR physical parameters directly from k-space as a nonlinear inverse problem
 <!-- #endregion -->
 
 <!-- #region id="j5FvmGT0yuNZ" -->
@@ -206,7 +206,7 @@ $DF(x_{n})$ is the Jacobian matrix of $F$ at the point $x_{n}$ of the $n$th Newt
 
 ---
 
-Therefore, we can directly estimate the MR parameter maps from undersampled k-space datasets. No pixel-wise fitting on intermediate images is required!
+Therefore, we can directly estimate the MR parameter maps from undersampled k-space datasets. No pixel-wise fitting or intermediate reconstruction of contrast-weighted images is required!
 
 For further information have a look into:
 
@@ -245,12 +245,17 @@ which should not be mentioned in detail here.
 ```bash colab={"base_uri": "https://localhost:8080/"} id="biZq8tr7yuNb" outputId="357da147-5ca7-4b6d-daa9-0c09a139f04b"
 
 ## Download raw data
-if [ ! -f IR-FLASH.cfl ]; then
-  wget -q https://zenodo.org/record/4060287/files/IR-FLASH.cfl
-  wget -q https://zenodo.org/record/4060287/files/IR-FLASH.hdr
+name=IR-FLASH
+
+if [[ ! -f ${name} ]]; then
+  echo Downloading ${name}
+  wget -q https://zenodo.org/record/4060287/files/${name}.cfl
+  wget -q https://zenodo.org/record/4060287/files/${name}.hdr
 fi
 
-head -n2 IR-FLASH.hdr
+# cat md5sum.txt | grep ${name} | md5sum -c --ignore-missing
+
+head -n2 ${name}.hdr
 ```
 
 #### 2.2 Coil Compression
@@ -372,6 +377,8 @@ head -n2 TI.hdr''
 !bart flip $(bart bitmask 0) tmp maps_all
 
 !bart toimg -W maps_all maps_all.png
+
+from IPython.display import Image
 Image("maps_all.png", width=1000)
 ```
 
