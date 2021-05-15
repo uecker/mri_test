@@ -8,22 +8,22 @@ jupyter:
       format_version: '1.2'
       jupytext_version: 1.6.0
   kernelspec:
-    display_name: Python 2
+    display_name: Python 3
     language: python
-    name: python2
+    name: python3
 ---
 
 <!-- #region id="VvjtiDK7yuNK" -->
 ## ISMRM 2021 Software Demo: 
 ## Nonlinear Model-based Reconstruction for Quantitative MRI with BART
 
-This tutorial uses the BART command-line inteface (CLI) (http://mrirecon.github.io/bart/) and presents how to perform nonlinear model-based reconstruction for quantitative MRI (T1 mapping, water/fat separation) using BART.
+This tutorial uses the BART command-line inteface (CLI) and presents how to perform nonlinear model-based reconstruction for quantitative MRI (T1 mapping, water/fat separation) using [BART](http://mrirecon.github.io/bart/).
 
 **Main Reference**
 
-Wang X, Tan Z, Scholand N, Roeloffs V, Uecker M. [Physics-based Reconstruction Methods for Magnetic Resonance Imaging](https://arxiv.org/abs/2010.01403) Philos Trans R Soc A 2021;379:20200196.
+    Wang X, Tan Z, Scholand N, Roeloffs V, Uecker M. [Physics-based Reconstruction Methods for Magnetic Resonance Imaging](https://arxiv.org/abs/2010.01403) Philos Trans R Soc A 2021;379:20200196.
 
-**Authors**: [Xiaoqing Wang](mailto:xiaoqing.wang@med.uni-goettingen.de); [Zhengguo Tan](mailto:zhengguo.tan@med.uni-goettingen.de); [Nick Scholand](mailto:nick.scholand@med.uni-goettingen.de); [Christian Holme](mailto:christian.holme@med.uni-goettingen.de).
+**Authors**: [Xiaoqing Wang](mailto:xiaoqing.wang@med.uni-goettingen.de), [Zhengguo Tan](mailto:zhengguo.tan@med.uni-goettingen.de), [Nick Scholand](mailto:nick.scholand@med.uni-goettingen.de), [Christian Holme](mailto:christian.holme@med.uni-goettingen.de)
 
 **Institution**: University Medical Center Göttingen
 <!-- #endregion -->
@@ -34,19 +34,14 @@ Wang X, Tan Z, Scholand N, Roeloffs V, Uecker M. [Physics-based Reconstruction M
 
 <!-- #region id="Dr1gsw9YyuNT" -->
 #### 0.1 Google colab
-The cell will setup BART on Google Colab. For a detailed explanation, see **How to Run BART on Google Colaboratory** in the same repository. You can skip this part if you want to run this notebook on your local machine.
+The cell will setup BART on Google Colab. For a detailed explanation, see **How to Run BART on Google Colaboratory** in the same [repository](https://github.com/mrirecon/bart-workshop/tree/master/ismrm2021). You can skip this part if you want to run this notebook on your local machine.
 
 This tutorial do need a GPU, you can select one by going to **Edit → Notebook settings**: Choose **GPU** from **Hardware accelerator** drop-down menu.
 <!-- #endregion -->
 
-```python colab={"base_uri": "https://localhost:8080/"} id="Be0cKVnsTi8w" outputId="f8fcb27c-6fae-4e8a-fa5a-a3b4e4bbb0b6"
-%env TOOLBOX_PATH=/content/bart
-```
-
 ```bash colab={"base_uri": "https://localhost:8080/"} id="TniVUmB3SohJ" outputId="657b70d7-e43d-4ee4-f20c-7db22a987bb3"
 
 # Use CUDA 10.1 when on Tesla K80
-
 
 # Estimate GPU Type
 GPU_NAME=$(nvidia-smi --query-gpu=gpu_name --format=csv,noheader)
@@ -123,7 +118,9 @@ from IPython.display import Image
 ```
 
 <!-- #region id="NlXHp2WIyuNX" -->
-#### 0.2 Local machine
+#### (0.2 Local machine) - OPTIONAL!
+
+**For** the **presentation** of this tutorial, I will run this notebook on my local machine. I have BART already installed and will define the required environmental variables.
 <!-- #endregion -->
 
 ```python id="5-Q-zakdyuNX" outputId="77a0372e-e3e9-42f9-b19f-8bec809909e2"
@@ -131,17 +128,26 @@ import os
 
 os.environ["TOOLBOX_PATH"] = "/home/xwang/bart"
 os.environ["PATH"] = os.getenv("TOOLBOX_PATH") + os.pathsep + os.getenv("PATH")
-
-! echo "# The BART used in this notebook:"
-! which bart
-! echo "# BART version: "
-! bart version
 ```
 
-### Download supporting files 
+#### 0.3 Check BART version
+
+Let us check the installes BART version.
+
+```python magic_args="bash"
+echo "# The BART used in this notebook:"
+which bart
+echo "# BART version: "
+bart version
+```
+
+### Download Supporting Materials
+
+For this tutorial we need some supporting materials for plotting and precomputed data. To run comfortable on Google Colab, we stored them in our GitHub repository and download them from there.
 
 ```bash
 
+# Download supporting materials for this notebook
 if [ ! -f bart_moba.zip ]; then
     wget https://github.com/mrirecon/bart-workshop/raw/master/ismrm2021/model_based/bart_moba.zip
 fi
@@ -150,9 +156,9 @@ unzip -n bart_moba.zip
 ```
 
 <!-- #region id="pp1Nyq5NyuNY" -->
-## Part I. Model-based Reconstruction for IR-FLASH
+# Part I. Model-based Reconstruction for IR-FLASH
 
-# **1. Introduction**
+## **1. Introduction**
 #### 1.1 Inversion-prepared T1 mapping (single-shot)
 <!-- #endregion -->
 
@@ -161,7 +167,9 @@ unzip -n bart_moba.zip
 <!-- #endregion -->
 
 <!-- #region id="fFjPTwiXyuNZ" -->
-* General idea of model-based reconstruction: Formulating the estimation of MR physical parameters directly from k-space as a nonlinear inverse problem
+**General Idea of Model-based Reconstruction**:
+
+    Formulating the estimation of MR physical parameters directly from k-space as a nonlinear inverse problem
 <!-- #endregion -->
 
 <!-- #region id="j5FvmGT0yuNZ" -->
