@@ -64,18 +64,21 @@ $$\underset{x}{\arg \min}\ \|Ax-y\|^2+\lambda R(x)$$
 [1] Luo, G, Zhao, N, Jiang, W, Hui, ES, Cao, P. MRI reconstruction using deep Bayesian estimation. Magn Reson Med. 2020; 84: 2246– 2261. https://doi.org/10.1002/mrm.28274
 <!-- #endregion -->
 
-## Part 0: Fetch data
+## Part 0: Download Supporting Material
 
 
-To follow up this tutorial, please download the data which contains radial k-space spokes, a trained model and some python functions
+This tutorial requires additional data including radial k-space spokes, a trained model and some python functions. If you want to follow up this tutorial execute the following cell, which downloads the required files.
 
 ```python
+# Download the required supporting materials
 ! wget -q https://raw.githubusercontent.com/mrirecon/bart-workshop/master/ismrm2021/bart_tensorflow/data.zip
 ! unzip data.zip
 ```
 
 <!-- #region id="3b544b17" -->
-## Part I: How to create tf graph for bart
+## Part I: How to Create a TF Graph for BART
+
+The first part of this tutorial is about creating a TF graph, which can be used with BART. Therefore, we need load some python libraries.
 <!-- #endregion -->
 
 ```python id="d9a21c71"
@@ -86,7 +89,9 @@ import numpy as np
 ```
 
 <!-- #region id="30b64c57" -->
-### Step 1: define input $x$
+### Step 1: Define Input $x$
+
+We define a TF object for our input.
 <!-- #endregion -->
 
 ```python id="d4d77905"
@@ -103,7 +108,7 @@ x = x * v
 ```
 
 <!-- #region id="8e2719ae" -->
-### Step 2: define output $R(x)=\|x\|^2$
+### Step 2: Define Output $R(x)=\|x\|^2$
 <!-- #endregion -->
 
 ```python id="f2920129"
@@ -114,7 +119,7 @@ output = tf.identity(tf.stack([l2, tf.ones_like(l2)], axis=-1), name='output_0')
 ```
 
 <!-- #region id="6e8f00fa" -->
-### Step 3: define the gradient of $R(x)=\|x\|^2$
+### Step 3: Define the Gradient of $R(x)=\|x\|^2$
 <!-- #endregion -->
 
 ```python id="2d24fc05"
@@ -127,7 +132,7 @@ grads = tf.squeeze(tf.gradients(output, x, grad_ys), name='grad_0')
 ```
 
 <!-- #region id="88c848b3" -->
-### Step 4: export graph and weights (if any)
+### Step 4: Export the Graph and Weights
 <!-- #endregion -->
 
 ```python colab={"base_uri": "https://localhost:8080/"} id="b0acc0c0" outputId="097bcdc1-597e-44d1-dd6c-3f72af686631"
@@ -142,15 +147,16 @@ export_model(None, "./", "l2_toy", as_text=False, use_gpu=False)
 ```
 
 <!-- #region id="ce4a7796" -->
-##  Part II: How to use the graph in BART
+##  Part II: How to Use the TF Graph in BART
 <!-- #endregion -->
 
 <!-- #region id="f1bfbc28" -->
-###  Step 1: Setup for BART
-
+###  Step 1: Setup BART and TF
 <!-- #endregion -->
 
-#### Download TF CAPI and set env path
+#### TF C API
+
+First we need to **download the TF C API**
 
 ```bash colab={"base_uri": "https://localhost:8080/"} id="1ea147d2" outputId="b9282bf9-f5cb-4cdd-d582-28f43aeafc5b"
 
@@ -159,13 +165,15 @@ wget -q https://storage.googleapis.com/tensorflow/libtensorflow/libtensorflow-gp
 mkdir tensorflow && tar -C tensorflow -xvzf libtensorflow-gpu-linux-x86_64-2.4.0.tar.gz
 ```
 
+and set the required environmental variables
+
 ```python colab={"base_uri": "https://localhost:8080/"} id="1cOk227HH3Vv" outputId="7a1d4b1c-d32b-4bbe-ed32-707b7e8f6c5b"
 %env LIBRARY_PATH=/content/tensorflow/include 
 %env LD_LIBRARY_PATH=/content/tensorflow/lib
 %env TF_CPP_MIN_LOG_LEVEL=3
 ```
 
-#### Download and compile BART
+#### Download and Compile BART
 
 ```bash
 
@@ -179,6 +187,13 @@ git clone https://github.com/mrirecon/bart/ bart
 
 [ -d "bart" ] && echo "BART branch ${BRANCH} was downloaded successfully."
 ```
+
+After downloading BART we need to compile it. Make sure the flags
+
+- `TENSORFLOW=1`
+- `TENSORFLOW_BASE=../tensorflow/`,
+
+which are required to intgrate TR graphs in BART, are set.
 
 ```bash
 
@@ -198,11 +213,13 @@ printf "%s\n" $COMPILE_SPECS > Makefiles/Makefile.local
 make &> /dev/null
 ```
 
-#### Set env path for BART
+After compilation of BART we need to set the required environmental variable: `TOOLBOX_PATH`
 
 ```python
 %env TOOLBOX_PATH=/content/bart
 ```
+
+Additionally, we add the compiled `bart` executable to our `PATH` variable
 
 ```python id="0RI9l6blElDF"
 import os
@@ -210,7 +227,9 @@ os.environ['PATH'] = os.environ['TOOLBOX_PATH'] + ":" + os.environ['PATH']
 ```
 
 <!-- #region id="743c3f4a" -->
-### Step 2: Help info for loading graph
+### Step 2: Help Information for TF Graph in BART's `pics`
+
+In the second step we have a look into the help for BART's regularization options for the `pics` tool.
 <!-- #endregion -->
 
 ```python colab={"base_uri": "https://localhost:8080/"} id="1f613571" outputId="6429ff8b-7993-4dd9-c841-dbb152c5c843"
@@ -224,25 +243,40 @@ $$\hat{x}=\underset{x}{\arg \min} \|x-v\|^2 + \lambda R(x)$$
 <!-- #endregion -->
 
 <!-- #region id="0e14c927" -->
-### Step 3: Extract radial spokes and compute coil sensitivities
+### Step 3: Extract Radial Spokes and Compute Coil Sensitivities
 <!-- #endregion -->
 
-We provide radial k-space data consisting of 160 spokes rotated with 7th golden angle. We use the first 60 spokes
+The dataset we downloaded above provides us with radial k-space data consisting of 160 spokes following a sampling scheme rotated by the 7th golden angle.
+
+For this tutorial we will use the first 60 spokes and extract them from the original dataset.
 
 ```bash id="7942ccc3"
-# prepare coil sensitivities and radial spokes
+
+# Extract spokes from original dataset
+
 spokes=60
-nx=256
+
 bart extract 2 0 $spokes ksp_256 ksp_256_c
 bart extract 2 0 $spokes traj_256 traj_256_c
 ```
 
-We first grid the raidal k-space data, and estimate coil sensitivities for them with ESPIRiT.
+To be able to exploit ESPIRiT for coil sensitivity estimation, we need to grid the non-Cartesian (radial) dataset. Instead of gridding it directly we use the internal gridding of the inverse `nufft` and project the result back into k-space with an `fft`.
 
 ```bash id="7ca46fd4"
 
+# Grid non-Cartesian k-space data
+
 bart nufft -i traj_256_c ksp_256_c zero_filled
 bart fft $(bart bitmask 0 1) zero_filled grid_ksp
+
+```
+
+After gridding the radial dataset, we can use ESPIRiT to estimate the coil sensitivity maps.
+
+```bash
+
+# Estimate coil-sensitivities with ESPIRiT
+
 bart ecalib -r20 -m1 -c0.0001 grid_ksp coilsen_esp
 ```
 
