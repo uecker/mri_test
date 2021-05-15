@@ -51,8 +51,6 @@ For fast inference and training on the CPU, we recommend to compile with the com
 * `BLAS_THREADSAFE=1` - to allow calling BLAS from multiple threads in parallel (which might give race conditions for some BLAS libraries)
 
 Depending on your system, it might be usefull to restrict the number of threads to the number of physical cores by setting `OMP_NUM_THREADS`.
-
-For this talk I will use my local machine, where BART is preinstalled with the options mentioned above. The following cells define the necessary environmental variables for running BART for me locally.
 <!-- #endregion -->
 
 ```python id="jOpINkR2O2eN" outputId="5d7dfa89-a6df-493d-85d1-aa71a611fda8" colab={"base_uri": "https://localhost:8080/"}
@@ -135,17 +133,17 @@ printf "%s\n" $COMPILE_SPECS > Makefiles/Makefile.local
 make &> /dev/null
 ```
 
-<!-- #region id="iCwkW7baO2eQ" -->
-### 0.2 Set Environment for BART
-
-After downloading and compiling BART, the next step simplifies the handling of BARTs command line interface inside of a ipyhton jupyter-notebook. We set the `TOOLBOX_PATH` variable,
-<!-- #endregion -->
+After downloading and compiling BART, we set the required `TOOLBOX_PATH` variable:
 
 ```python id="JPQTTNcg6LFv" outputId="4e9edcf4-d399-4fe8-ffc2-7febf47effc0" colab={"base_uri": "https://localhost:8080/"}
 %env TOOLBOX_PATH=/content/bart
 ```
 
-add the BART directory to the PATH variable and include the python wrapper for reading *.cfl files:
+<!-- #region id="iCwkW7baO2eQ" -->
+### 0.2 Set Environment for BART
+
+After downloading and compiling BART, the next step simplifies the handling of BARTs command line interface inside of a ipyhton jupyter-notebook. We add the BART directory to the PATH variable and include the python wrapper for reading *.cfl files:
+<!-- #endregion -->
 
 ```python id="9WCi0TsVO2eQ"
 import os
@@ -420,10 +418,12 @@ print(np.real(labels[:,:10]))
 <!-- #region id="REBOoE7YO2eb" -->
 # PART II: Reconstruction Networks - `bart reconet`
 
-We already implemented
+We have implemented
 
 > Variational Network<sup>1</sup>:
-$$ x^{(i)} = x^{(i-1)}  - \lambda \nabla||Ax -b||^2 + Net(x^{(i-1)}, \Theta^{(i)} )$$
+$$
+x^{(i)} = x^{(i-1)}  - \lambda \nabla||Ax -b||^2 + Net(x^{(i-1)}, \Theta^{(i)} )
+$$
 > MoDL<sup>2</sup>:
 $$
 \begin{align}
