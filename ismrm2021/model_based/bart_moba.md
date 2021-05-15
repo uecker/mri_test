@@ -141,6 +141,7 @@ echo "# BART version: "
 bart version
 ```
 
+<a id='download-materials'></a>
 ### Download Supporting Materials
 
 For this tutorial we need some supporting materials for plotting and precomputed data. To run comfortable on Google Colab, we stored them in our GitHub repository and download them from there.
@@ -159,7 +160,7 @@ unzip -n bart_moba.zip
 # Part I. Model-based Reconstruction for IR-FLASH
 
 ## **1. Introduction**
-#### 1.1 Inversion-prepared T1 mapping (single-shot)
+#### 1.1 Single-Shot Inversion-Prepared T1 Mapping
 <!-- #endregion -->
 
 <!-- #region id="apfnSMlnyuNY" outputId="a4633a0e-3161-4203-add0-2be5ef2ceb47" -->
@@ -375,7 +376,7 @@ Thank you for joining! Feel free to ask any questions:)
 <!-- #endregion -->
 
 <!-- #region id="FbOHw18nyuNg" -->
-## Part II. Model-based Reconstruction on Multi-Echo Radial FLASH
+# Part II. Model-based Reconstruction on Multi-Echo Radial FLASH
 
 
 
@@ -410,43 +411,15 @@ with $\text{W}$ and $\text{F}$ being the water and fat images, and $f_{B_0}$ the
 As shown previously in the software session, this signal model (implemented as a nonlinear operator in BART) can be chained with the parallel imaging model, and the complete unknown $x = (\text{W}, \text{F}, f_{B_0}, c_1, \cdots, c_N)^T$, where $c_j$ represents the coil sensitivity map.
 <!-- #endregion -->
 
-<!-- #region id="RA_PkCfB05kE" -->
-### Step 0. Setup BART
-
-If you run this notebook on your local machine, you need to specify the `bart` directory:
-
-```python
-import os
-
-os.environ['TOOLBOX_PATH'] = "/path/to/bart"
-os.environ['PATH'] = os.environ['TOOLBOX_PATH'] + os.pathsep + os.environ['PATH']
-```
-<!-- #endregion -->
-
-```python colab={"base_uri": "https://localhost:8080/"} id="NseT5mg605kF" outputId="1e30f19f-8142-4e72-effb-c8cf9df6f145"
-! which bart
-! bart version
-```
-
 <!-- #region id="Su7OA772yuNh" -->
 ### Step 1. Get the Raw Data
+We downloaded all supporting materials already in the [previous section](#download-materials).  
+Let us check the dimensions of our raw data:
 <!-- #endregion -->
 
-```bash colab={"base_uri": "https://localhost:8080/"} id="YHqhZXO_yuNh" outputId="a709ef58-a272-4a5c-b8ef-95f15f24cfe6"
+```bash colab={"base_uri": "https://localhost:8080/"} id="uREkjCTnyuNh" outputId="6e9c5ae8-3dd1-4c89-fd96-e6c1dfadde4c"
 
-if [ ! -f bart_moba.zip ]; then
-    wget https://github.com/mrirecon/bart-workshop/raw/master/ismrm2021/model_based/bart_moba.zip
-fi
-
-unzip -n bart_moba.zip
-```
-
-<!-- #region id="cttYnycoyuNh" -->
-Check the dimension of the raw data:
-<!-- #endregion -->
-
-```python colab={"base_uri": "https://localhost:8080/"} id="uREkjCTnyuNh" outputId="6e9c5ae8-3dd1-4c89-fd96-e6c1dfadde4c"
-! head -n2 ME-FLASH-5-cc.hdr
+head -n2 ME-FLASH-5-cc.hdr
 ```
 
 <!-- #region id="Hkf4QP8myuNi" -->
