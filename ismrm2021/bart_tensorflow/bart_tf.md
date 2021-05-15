@@ -328,8 +328,8 @@ l2_pics_tf = readcfl("l2_pics_tf")
 
 axis[0].imshow(abs(l2_pics), cmap='gray', interpolation='None')
 axis[1].imshow(abs(l2_pics_tf), cmap='gray', interpolation='None')
-axis[0].set_title("l2_pics")
-axis[1].set_title("l2_pics_tf")
+axis[0].set_title("l2_pics", fontsize=20)
+axis[1].set_title("l2_pics_tf", fontsize=20)
 axis[0].axis('off')
 axis[1].axis('off')
 ```
@@ -338,20 +338,29 @@ axis[1].axis('off')
 ## Example 2: $R(x)=\log p(x, net(x))$ 
 <!-- #endregion -->
 
-Use the trained prior as a regularization term
+After validating the the TF graph import as regularization based on the l2 regularization, we want to add knowledge from a trained prior to our reconstruction as a regularization term.
+
+We already downloaded the pretrained prior and can have a look into its files
 
 ```python id="a34231d2"
 !ls prior/
 ```
 
+We need to generate weights for a density compensation in the following reconstruction. This can be done with the `gen_weights` function. To use the result from BART's CLI we need to convert it into the .cfl format. Here, we use the `writecfl` function of BART's python interface.
+
 ```python id="edc18970"
-# generate weights for density compensation
-writecfl("weights", gen_weights(60, 256))           
+writecfl("weights", gen_weights(60, 256))
 ```
+
+Now we can run the reconstruction.
+
+Again we pass the information about our regularization using the `-R TF:{graph_path}:lambda` notation of `pics` regularization. We run the reconstruction for 30 iterations.
 
 ```python id="9b0b02b9"
 !bart pics -i30 -R TF:{./prior/pixel_cnn}:8 -d5 -e -I -p weights -t traj_256_c ksp_256_c coilsen_esp w_pics_prior
 ```
+
+Finally, we can compare the results for the built-in l2, TF l2 and prior regularized reconstruction with the `pics` tool in BART. We visulaize all results next to each other.
 
 ```python id="7c32249b"
 import matplotlib.pyplot as plt
@@ -359,11 +368,11 @@ pics_prior = readcfl("w_pics_prior")
 fig, axis = plt.subplots(figsize=(12,4), ncols=3)
 
 axis[0].imshow(abs(l2_pics), cmap='gray', interpolation='None')
-axis[0].set_title("l2_pics")
+axis[0].set_title("l2_pics", fontsize=20)
 axis[1].imshow(abs(l2_pics_tf), cmap='gray', interpolation='None')
-axis[1].set_title("l2_pics_tf")
+axis[1].set_title("l2_pics_tf", fontsize=20)
 axis[2].imshow(abs(pics_prior), cmap='gray', interpolation='None')
-axis[2].set_title("prior_pics")
+axis[2].set_title("prior_pics", fontsize=20)
 axis[0].axis('off')
 axis[1].axis('off')
 axis[2].axis('off')
