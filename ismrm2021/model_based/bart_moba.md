@@ -426,7 +426,7 @@ Wang X, Tan Z, Scholand N, Roeloffs V, Uecker M. [Physics-based reconstruction m
 
 ![](https://github.com/mrirecon/bart-workshop/blob/master/ismrm2021/model_based/ME_FLASH.png?raw=1)
 > Multiple gradient echoes are acquired after each RF excitation. 
-> Every echo samples different *k*-space radial spoke with the use of triangular blip gradients.
+> Every echo sample follows a different radial *k*-space spoke by application of triangular blip gradients between the acquisitions.
 
 ### 2. Signal Modeling In the Case of Three-Echo Acquisition
 
@@ -436,11 +436,11 @@ $\rho_m = \big( \text{W} + \text{F} \cdot z_m \big) \cdot e^{i 2\pi f_{B_0} \tex
 
 with $\text{W}$ and $\text{F}$ being the water and fat images, and $f_{B_0}$ the $B_0$ field inhomogeneity map. The fat chemical shift phase modulation $z_m = \sum_{p=1}^6 \alpha_p e^{i2\pi f_p \text{TE}_m}$.
 
-As shown previously in the software session, this signal model (implemented as a nonlinear operator in BART) can be chained with the parallel imaging model, and the complete unknown $x = (\text{W}, \text{F}, f_{B_0}, c_1, \cdots, c_N)^T$, where $c_j$ represents the coil sensitivity map.
+As shown previously in the software sessions introduction, this signal model (implemented as a nonlinear operator) can be chained with the parallel imaging model, combining the tissue characteristic unknowns with the coil sensitivity maps $c_j$ to: $x = (\text{W}, \text{F}, f_{B_0}, c_1, \cdots, c_N)^T$. Thus, we created a calibration-less model-based reconstruction.
 <!-- #endregion -->
 
 <!-- #region id="Su7OA772yuNh" -->
-### Step 1. Get the Raw Data
+#### 2.1 Get the Raw Data
 We downloaded all supporting materials already in the [previous section](#download-materials).  
 Let us check the dimensions of our raw data:
 <!-- #endregion -->
@@ -451,7 +451,7 @@ head -n2 ME-FLASH-5-cc.hdr
 ```
 
 <!-- #region id="Hkf4QP8myuNi" -->
-### Step 2. Prepare Raw Data for Image Reconstruction in BART
+#### 2.2 Raw Data Preparation for Image Reconstruction
 <!-- #endregion -->
 
 <!-- #region id="3zBaWmmHyuNi" -->
@@ -529,7 +529,7 @@ bart reshape $(bart bitmask 2 10) $((SPOKES * FRAMES)) 1 traj_3eco traj_part
 ```
 
 <!-- #region id="GY2PY3jWyuNj" -->
-**Water/fat separation and $B_0$ field mapping via model-based reconstruction**
+#### 2.3 Water/Fat Separation and $B_0$ Field Mapping via Model-based Reconstruction
 <!-- #endregion -->
 
 ```python colab={"base_uri": "https://localhost:8080/"} id="lsgih0Z1yuNj" outputId="98108511-b0d5-4381-b3ea-3df7c2066a40"
@@ -550,7 +550,7 @@ bart reshape $(bart bitmask 2 10) $((SPOKES * FRAMES)) 1 traj_3eco traj_part
 ```
 
 <!-- #region id="CqmqOcmSyuNj" -->
-**2.4 Visualization**
+#### 2.4 Visualization
 
 - **Display model-based reconstructed $\text{W}$, $\text{F}$ and $f_{B_0}$ maps**
 <!-- #endregion -->
