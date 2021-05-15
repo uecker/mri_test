@@ -194,19 +194,25 @@ $$F: x \mapsto y = {\mathcal{P} \mathcal{F} C} \cdot {M(x_{p})}$$
 <!-- #region id="Z3Rf33O-yuNa" -->
 #### 1.3 Optimization
 
-$$\hat{x} = \text{argmin}_{x}\|F(x) -y\|_{2}^{2} + \lambda \cdot R(x) $$
+We use the iteratively regularized Gauss-Newton method (IRGNM) in BART to solve the nonlinear inverse problem
 
-- We can use the iteratively regularized Gauss-Newton method (IRGNM) in BART to solve the above nonlinear inverse problem, i.e., the nonlinear problem can be linearly solved in each Gauss-Newton step,
+$$\hat{x} = \text{argmin}_{x}\|F(x) -y\|_{2}^{2} + \lambda \cdot R(x), $$
+
+i.e., the nonlinear problem can be linearly solved in each Gauss-Newton step:
 
 $$\hat{x}_{n+1}= \text{argmin}_{x}\|DF(x_{n})(x−x_{n}) +F(x_{n})−y\|_{2}^{2} + \lambda \cdot R(x)$$
 
-- $DF(x_{n})$ the Jacobian matrix of $F$ at the point $x_{n}$ of the $n$th Newton step
-- Direct estimation of MR parameter maps (No fitting is needed)
-<!-- #endregion -->
+$DF(x_{n})$ is the Jacobian matrix of $F$ at the point $x_{n}$ of the $n$th Newton step.
 
-<!-- #region id="-rU3eURIyuNa" -->
-Reference: [Wang X](mailto:xiaoqing.wang@med.uni-goettingen.de), Roeloffs V, Klosowski J, Tan Z, Voit D, Uecker M, Frahm J. 
-[Model-based T1 Mapping with Sparsity Constraints Using Single-Shot Inversion-Recovery Radial FLASH](https://onlinelibrary.wiley.com/doi/full/10.1002/mrm.26726). Magn Reson Med 2018;79:730-740.
+---
+
+Therefore, we can directly estimate the MR parameter maps from undersampled k-space datasets. No pixel-wise fitting on intermediate images is required!
+
+For further information have a look into:
+
+[Wang X](mailto:xiaoqing.wang@med.uni-goettingen.de), Roeloffs V, Klosowski J, Tan Z, Voit D, Uecker M, Frahm J.,  
+[Model-based T1 Mapping with Sparsity Constraints Using Single-Shot Inversion-Recovery Radial FLASH](https://onlinelibrary.wiley.com/doi/full/10.1002/mrm.26726).  
+Magn Reson Med 2018;79:730-740.
 <!-- #endregion -->
 
 <!-- #region id="G4xg04ppyuNa" -->
