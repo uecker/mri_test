@@ -159,8 +159,8 @@ unzip -n bart_moba.zip
 <!-- #region id="pp1Nyq5NyuNY" -->
 # Part I. Model-based Reconstruction for IR-FLASH
 
-## **1. Introduction**
-#### 1.1 Single-Shot Inversion-Prepared T1 Mapping
+## 1. Introduction
+### 1.1 Single-Shot Inversion-Prepared T1 Mapping
 <!-- #endregion -->
 
 <!-- #region id="apfnSMlnyuNY" outputId="a4633a0e-3161-4203-add0-2be5ef2ceb47" -->
@@ -174,7 +174,7 @@ unzip -n bart_moba.zip
 <!-- #endregion -->
 
 <!-- #region id="j5FvmGT0yuNZ" -->
-#### 1.2 Operator chain of parallel imaging and signal model (nonlinear)
+### 1.2 Operator chain of parallel imaging and signal model (nonlinear)
 <!-- #endregion -->
 
 <!-- #region id="al3v3J8byuNZ" outputId="b13c92ff-57ae-42f6-b15c-4b3ba98b1281" -->
@@ -192,7 +192,7 @@ $$F: x \mapsto y = {\mathcal{P} \mathcal{F} C} \cdot {M(x_{p})}$$
 <!-- #endregion -->
 
 <!-- #region id="Z3Rf33O-yuNa" -->
-#### 1.3 Optimization
+### 1.3 Optimization
 
 We use the iteratively regularized Gauss-Newton method (IRGNM) in BART to solve the nonlinear inverse problem
 
@@ -216,7 +216,9 @@ Magn Reson Med 2018;79:730-740.
 <!-- #endregion -->
 
 <!-- #region id="G4xg04ppyuNa" -->
-#### 1.4 BART Commands
+### 1.4 BART Commands
+
+The model-based reconstruction framework in BART can be accessed from the command line by using the `moba` function. Let us hav a look into its options. It now supports not only T1, but also T2 and T2* models.
 <!-- #endregion -->
 
 ```bash colab={"base_uri": "https://localhost:8080/"} id="HBy8TOboyuNb" outputId="74f29a4b-dbe7-4053-ad79-9dc7acdc64e2"
@@ -226,17 +228,19 @@ bart moba -h
 ```
 
 <!-- #region id="QRugmM8WyuNb" -->
-### 2. Data Preparation 
-#### The same as BART webinar 3 (https://github.com/mrirecon/bart-webinars/tree/master/webinar3).
+## 2. Data Preparation 
 
-2.1 Download raw data
+The data preparation is dicussed in detail in the [3rd event of the BART webinar series](https://github.com/mrirecon/bart-webinars/tree/master/webinar3). Here you can find presentation and exercise materials for the individual steps
 
-2.2 Coil compression
-
-2.3 Prepare radial trajectory (golden-angle) including gradient-delay correction
-
+2.1 Download raw data  
+2.2 Coil compression  
+2.3 Prepare radial trajectory (golden-angle) including gradient-delay correction  
 2.4 Prepare time vector
+
+which should not be mentioned in detail here.
 <!-- #endregion -->
+
+#### 2.1 Download Raw Data
 
 ```bash colab={"base_uri": "https://localhost:8080/"} id="biZq8tr7yuNb" outputId="357da147-5ca7-4b6d-daa9-0c09a139f04b"
 
@@ -249,6 +253,8 @@ fi
 head -n2 IR-FLASH.hdr
 ```
 
+#### 2.2 Coil Compression
+
 ```bash colab={"base_uri": "https://localhost:8080/"} id="WefhrOC_yuNc" outputId="98882748-b134-4a95-d8a9-76a0deea8c08"
 
 ## Coil compression
@@ -259,6 +265,8 @@ NUM_VCOILS=3 # for the purpose of fast computation, for better performance, 8 or
 # coil compression
 bart cc -A -p $NUM_VCOILS ksp ksp_cc
 ```
+
+#### 2.3 Trajectory Preparation with Gradient Delay Correction
 
 ```bash colab={"base_uri": "https://localhost:8080/"} id="KnVX9vwjyuNc" outputId="1b53c479-43df-48f1-c75e-a7d1f7b27b81"
 
@@ -289,6 +297,8 @@ echo "Gradient Delays: "$GDELAY
 # Calculate the "correct" trajectory with known gradient delays
 bart traj -r -c -D -G -x$READ -y$SPOKES -s7 -t$TIME -q $GDELAY trajn
 ```
+
+#### 2.4 Preparation of Time Vector
 
 ```bash colab={"base_uri": "https://localhost:8080/"} id="F4oVtIZ3yuNd" outputId="eb504696-abf6-4bb2-d9da-c46a67b068e0"
 
