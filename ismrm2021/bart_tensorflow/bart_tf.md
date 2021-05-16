@@ -113,9 +113,9 @@ x = x * v
 <!-- #region id="8e2719ae" -->
 ### Step 2: Set Output to TF's l2 Loss
 
-In the later following reconstruction example we want to validate the exploitation of TF graphs in BART on a l2 regularization example. 
+In the later following reconstruction example we want to validate the integration of TF graphs in BART with an l2 regularization example. 
 
-Therefore, we are going to compare a reconstruction with the internal l2 loss of the `pics` tool to the result using a TF graph.
+Therefore, we are going to compare a reconstruction with the internal l2 loss of the `pics` tool with the result using a TF graph regularization.
 
 The required graph is now set to have TF's l2 loss as an output.
 <!-- #endregion -->
@@ -130,7 +130,7 @@ output = tf.identity(tf.stack([l2, tf.ones_like(l2)], axis=-1), name='output_0')
 <!-- #region id="6e8f00fa" -->
 ### Step 3: Define the Gradient of TF's l2 Loss
 
-For being able to use the TF graph as a regularization inside of a larger ierative optimization algorithm, we need to know its gradients, whcih are defined in the following.
+For being able to use the TF graph as a regularization inside of a larger iterative optimization algorithm, we need to know its gradients, which are defined in the following.
 <!-- #endregion -->
 
 ```python id="2d24fc05"
@@ -145,7 +145,7 @@ grads = tf.squeeze(tf.gradients(output, x, grad_ys), name='grad_0')
 <!-- #region id="88c848b3" -->
 ### Step 4: Export the Graph and Weights
 
-The created l2 loss graph needs to be stored in BART understandable format, which allows us to pass it to `pics` CLI. Therefore, we exploit the `export_model` function.
+The created l2 loss graph needs to be stored in a BART understandable format, which allows us to pass it to the `pics` command of BART's CLI. Therefore, we exploit the `export_model` function.
 <!-- #endregion -->
 
 ```python colab={"base_uri": "https://localhost:8080/"} id="b0acc0c0" outputId="c132aef9-07ac-4342-b647-0504b37fbd34"
@@ -187,7 +187,7 @@ mkdir tensorflow && tar -C tensorflow -xvzf libtensorflow-gpu-linux-x86_64-2.4.0
 ```
 
 <!-- #region id="RyKtOniHypX5" -->
-and set the required environmental variables
+and need to set the required environmental variables
 <!-- #endregion -->
 
 ```python colab={"base_uri": "https://localhost:8080/"} id="1cOk227HH3Vv" outputId="e9973ea8-f0d4-4d07-9380-ed83eaa48630"
@@ -219,7 +219,7 @@ After downloading BART we need to compile it. Make sure the flags
 - `TENSORFLOW=1`
 - `TENSORFLOW_BASE=../tensorflow/`,
 
-which are required to intgrate TR graphs in BART, are set.
+which are required to intgrate TF graphs in BART, are set.
 <!-- #endregion -->
 
 ```bash colab={"base_uri": "https://localhost:8080/"} id="ReAYicSoypX7" outputId="7f553ed1-dda4-4dde-a878-ec4fe5233db0"
@@ -260,7 +260,7 @@ os.environ['PATH'] = os.environ['TOOLBOX_PATH'] + ":" + os.environ['PATH']
 <!-- #region id="743c3f4a" -->
 ### Step 2: Help Information for TF Graph in BART's `pics`
 
-In the second step we have a look into the help for BART's regularization options for the `pics` tool.
+In the second step we look into the help for BART's regularization options for the `pics` tool.
 <!-- #endregion -->
 
 ```python colab={"base_uri": "https://localhost:8080/"} id="1f613571" outputId="fe50220b-11c3-4593-a577-799f5ceb8d9f"
@@ -281,7 +281,7 @@ To integrate a TF graph as regularization term in `pics` use the notation `-R TF
 <!-- #endregion -->
 
 <!-- #region id="2SY7QAIjypX9" -->
-The dataset we downloaded above provides us with radial k-space data consisting of 160 spokes following a sampling scheme rotated by the 7th golden angle.
+The dataset we downloaded provides us with radial k-space data consisting of 160 spokes following a sampling scheme rotated by the 7th golden angle.
 
 For this tutorial we will use the first 60 spokes and extract them from the original dataset.
 <!-- #endregion -->
@@ -297,10 +297,10 @@ bart extract 2 0 $spokes traj_256 traj_256_c
 ```
 
 <!-- #region id="gD4GvsY6ypX-" -->
-To be able to exploit ESPIRiT for coil sensitivity estimation, we need to grid the non-Cartesian (radial) dataset. Instead of gridding it directly we use the internal gridding of the inverse `nufft` and project the result back into k-space with an `fft`.
+To be able to exploit ESPIRiT for coil sensitivity estimation, we need to grid the non-Cartesian (radial) dataset. Instead of gridding it directly we use the internal gridding of the inverse `nufft` tool and project the result back into k-space with a regular `fft`.
 <!-- #endregion -->
 
-```bash id="7ca46fd4" colab={"base_uri": "https://localhost:8080/"} outputId="ec026738-7f6a-4f30-cd25-026571995017"
+```bash colab={"base_uri": "https://localhost:8080/"} id="7ca46fd4" outputId="ec026738-7f6a-4f30-cd25-026571995017"
 
 # Grid non-Cartesian k-space data
 
@@ -328,17 +328,17 @@ bart ecalib -r20 -m1 -c0.0001 grid_ksp coilsen_esp
 In this first example we use the TF graph as an l2 regularization term. We pass the TF graph following the `-R TF:{graph_path}:lambda` notation for `pics` regularization terms.
 <!-- #endregion -->
 
-```python id="334b8029" colab={"base_uri": "https://localhost:8080/"} outputId="ef514ce1-60c6-4886-f78d-0f8da05a12bf"
+```python colab={"base_uri": "https://localhost:8080/"} id="334b8029" outputId="ef514ce1-60c6-4886-f78d-0f8da05a12bf"
 # Reconstruct with TF Graph as l2 regularization
 
 !bart pics -i100 -R TF:{$(pwd)/l2_toy}:0.02 -d5 -e -t traj_256_c ksp_256_c coilsen_esp l2_pics_tf
 ```
 
 <!-- #region id="qqpVGocNypYA" -->
-After reconstructing the dataset with the TF graph as loss we validate it by comparison to the built-in l2 regularization in `pics` called by adding the `-l2` flag to the CLI call.
+After reconstruction of the dataset with the TF graph as loss we validate it by comparing it to the built-in l2 regularization in `pics` called by adding the `-l2` flag to the CLI call.
 <!-- #endregion -->
 
-```python id="4d9f2471" colab={"base_uri": "https://localhost:8080/"} outputId="11efb117-12ef-43fb-e98b-e47d07c310d0"
+```python colab={"base_uri": "https://localhost:8080/"} id="4d9f2471" outputId="11efb117-12ef-43fb-e98b-e47d07c310d0"
 # Reconstruct with built-in l2 regularization
 
 !bart pics -l2 0.01 -e -d5 -t traj_256_c ksp_256_c coilsen_esp l2_pics
@@ -348,7 +348,7 @@ After reconstructing the dataset with the TF graph as loss we validate it by com
 For an improved comparison we visualize them next to each other.
 <!-- #endregion -->
 
-```python id="029c7626" colab={"base_uri": "https://localhost:8080/", "height": 272} outputId="47bd6c54-df8a-48ab-f0e9-408b1d53f4f6"
+```python colab={"base_uri": "https://localhost:8080/", "height": 272} id="029c7626" outputId="47bd6c54-df8a-48ab-f0e9-408b1d53f4f6"
 from utils import *
 import matplotlib.pyplot as plt
 fig, axis = plt.subplots(figsize=(8,4), ncols=2)
@@ -368,12 +368,12 @@ axis[1].axis('off')
 <!-- #endregion -->
 
 <!-- #region id="MVfZh49mypYB" -->
-After validating the the TF graph import as regularization based on the l2 regularization, we want to add knowledge from a trained prior to our reconstruction as a regularization term.
+After validating the TF graph import as regularization based on the l2 regularization, we want to add knowledge from a trained prior to our reconstruction.
 
 We already downloaded the pretrained prior and can have a look into its files
 <!-- #endregion -->
 
-```python id="a34231d2" colab={"base_uri": "https://localhost:8080/"} outputId="c5bbf567-2433-4d41-bee9-c22ffa4a405d"
+```python colab={"base_uri": "https://localhost:8080/"} id="a34231d2" outputId="c5bbf567-2433-4d41-bee9-c22ffa4a405d"
 !ls prior/
 ```
 
@@ -391,15 +391,15 @@ Now we can run the reconstruction.
 Again we pass the information about our regularization using the `-R TF:{graph_path}:lambda` notation of `pics` regularization. We run the reconstruction for 30 iterations.
 <!-- #endregion -->
 
-```python id="9b0b02b9" colab={"base_uri": "https://localhost:8080/"} outputId="4308a74e-6554-4c3f-b303-a7c4ce255cb3"
+```python colab={"base_uri": "https://localhost:8080/"} id="9b0b02b9" outputId="4308a74e-6554-4c3f-b303-a7c4ce255cb3"
 !bart pics -i30 -R TF:{./prior/pixel_cnn}:8 -d5 -e -I -p weights -t traj_256_c ksp_256_c coilsen_esp w_pics_prior
 ```
 
 <!-- #region id="--9WFDSVypYD" -->
-Finally, we can compare the results for the built-in l2, TF l2 and prior regularized reconstruction with the `pics` tool in BART. We visulaize all results next to each other.
+Finally, we can compare the results for the built-in l2, TF l2 and prior regularized reconstruction with the `pics` tool in BART. We visualize all results next to each other.
 <!-- #endregion -->
 
-```python id="7c32249b" colab={"base_uri": "https://localhost:8080/", "height": 266} outputId="f07cb662-1c72-41da-d033-9a069a965f05"
+```python colab={"base_uri": "https://localhost:8080/", "height": 266} id="7c32249b" outputId="f07cb662-1c72-41da-d033-9a069a965f05"
 import matplotlib.pyplot as plt
 pics_prior = readcfl("w_pics_prior")
 fig, axis = plt.subplots(figsize=(12,4), ncols=3)
@@ -416,7 +416,7 @@ axis[2].axis('off')
 
 ```
 
-```python id="2f804e22" colab={"base_uri": "https://localhost:8080/"} outputId="85864854-f6e0-40ec-8a0f-4faad7d2222b"
+```python colab={"base_uri": "https://localhost:8080/"} id="2f804e22" outputId="85864854-f6e0-40ec-8a0f-4faad7d2222b"
 ! bash clean
 ```
 
