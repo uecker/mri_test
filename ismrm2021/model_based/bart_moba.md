@@ -17,11 +17,11 @@ jupyter:
 ## ISMRM 2021 Software Demo: 
 ## Nonlinear Model-based Reconstruction for Quantitative MRI with BART
 
-This tutorial uses the BART command-line inteface (CLI) and presents how to perform nonlinear model-based reconstruction for quantitative MRI (T1 mapping, water/fat separation) using [BART](http://mrirecon.github.io/bart/).
+This tutorial uses the BART command-line inteface (CLI) and presents how to perform nonlinear model-based reconstruction for quantitative MRI (T1 mapping, water-fat separation) using [BART](http://mrirecon.github.io/bart/).
 
 **Main Reference**
 
-    Wang X, Tan Z, Scholand N, Roeloffs V, Uecker M. [Physics-based Reconstruction Methods for Magnetic Resonance Imaging](https://arxiv.org/abs/2010.01403) Philos Trans R Soc A 2021;379:20200196.
+Wang X, Tan Z, Scholand N, Roeloffs V, Uecker M. [Physics-based Reconstruction Methods for Magnetic Resonance Imaging](https://arxiv.org/abs/2010.01403) Philos Trans R Soc A 2021;379:20200196.
 
 **Authors**: [Xiaoqing Wang](mailto:xiaoqing.wang@med.uni-goettingen.de), [Zhengguo Tan](mailto:zhengguo.tan@med.uni-goettingen.de), [Nick Scholand](mailto:nick.scholand@med.uni-goettingen.de), [Christian Holme](mailto:christian.holme@med.uni-goettingen.de)
 
@@ -114,13 +114,12 @@ os.environ['OMP_NUM_THREADS']="4"
 
 os.environ['PATH'] = os.environ['TOOLBOX_PATH'] + ":" + os.environ['PATH']
 sys.path.append(os.environ['TOOLBOX_PATH'] + "/python")
-from IPython.display import Image
 ```
 
 <!-- #region id="NlXHp2WIyuNX" -->
 #### (0.2 Local machine) - OPTIONAL!
 
-**For** the **presentation** of this tutorial, I will run this notebook on my local machine. I have BART already installed and will define the required environmental variables.
+Alternatively, this notebook can run on local machines. In this case, we need to define the required environmental variables.
 <!-- #endregion -->
 
 ```python id="5-Q-zakdyuNX" outputId="77a0372e-e3e9-42f9-b19f-8bec809909e2"
@@ -134,7 +133,8 @@ os.environ["PATH"] = os.getenv("TOOLBOX_PATH") + os.pathsep + os.getenv("PATH")
 
 Let us check the installes BART version.
 
-```python magic_args="bash"
+```bash
+
 echo "# The BART used in this notebook:"
 which bart
 echo "# BART version: "
@@ -144,7 +144,7 @@ bart version
 <a id='download-materials'></a>
 ### Download Supporting Materials
 
-For this tutorial we need some supporting materials for plotting and precomputed data. To run comfortable on Google Colab, we stored them in our GitHub repository and download them from there.
+For this tutorial, we do need several supporting materials (figures, plotting scripts and compressed data for mult-echo radial FLASH). They are stored in the GitHub repository and need to be downloaded.
 
 ```bash
 
@@ -170,7 +170,7 @@ unzip -n bart_moba.zip
 <!-- #region id="fFjPTwiXyuNZ" -->
 **General Idea of Model-based Reconstruction**:
 
-    Formulating the estimation of MR physical parameters directly from k-space as a nonlinear inverse problem
+   Formulating the estimation of MR physical parameters directly from k-space as a nonlinear inverse problem
 <!-- #endregion -->
 
 <!-- #region id="j5FvmGT0yuNZ" -->
@@ -206,7 +206,7 @@ $DF(x_{n})$ is the Jacobian matrix of $F$ at the point $x_{n}$ of the $n$th Newt
 
 ---
 
-Therefore, we can directly estimate the MR parameter maps from undersampled k-space datasets. No pixel-wise fitting on intermediate images is required!
+Therefore, we can directly estimate the MR parameter maps from undersampled k-space datasets. No pixel-wise fitting or intermediate reconstruction of contrast-weighted images is required!
 
 For further information have a look into:
 
@@ -237,7 +237,7 @@ The data preparation is dicussed in detail in the [3rd event of the BART webinar
 2.3 Prepare radial trajectory (golden-angle) including gradient-delay correction  
 2.4 Prepare time vector
 
-which should not be mentioned in detail here.
+which are not mentioned in detail here.
 <!-- #endregion -->
 
 #### 2.1 Download Raw Data
@@ -245,12 +245,17 @@ which should not be mentioned in detail here.
 ```bash colab={"base_uri": "https://localhost:8080/"} id="biZq8tr7yuNb" outputId="357da147-5ca7-4b6d-daa9-0c09a139f04b"
 
 ## Download raw data
-if [ ! -f IR-FLASH.cfl ]; then
-  wget -q https://zenodo.org/record/4060287/files/IR-FLASH.cfl
-  wget -q https://zenodo.org/record/4060287/files/IR-FLASH.hdr
+name=IR-FLASH
+
+if [[ ! -f ${name} ]]; then
+  echo Downloading ${name}
+  wget -q https://zenodo.org/record/4060287/files/${name}.cfl
+  wget -q https://zenodo.org/record/4060287/files/${name}.hdr
 fi
 
-head -n2 IR-FLASH.hdr
+# cat md5sum.txt | grep ${name} | md5sum -c --ignore-missing
+
+head -n2 ${name}.hdr
 ```
 
 #### 2.2 Coil Compression
@@ -335,8 +340,14 @@ head -n2 TI.hdr''
 ```
 
 <!-- #region id="jaQzsLuAyuNe" -->
-### 3. Nonlinear Model-based Reconstruction
-3.1 Model-based reconstruction
+## 3. Nonlinear Model-based Reconstruction
+
+The full nonlinear reconstruction can be applied to data by using only the `moba` command in the BART CLI. No coil sensitivity information is necessary, because they are jointly estimated.
+
+#### 3.1 Reconstruction
+A detailed description of the reconstruction can be also found in the [3rd event of the BART webinar series](https://github.com/mrirecon/bart-webinars/tree/master/webinar3).
+
+Here we apply a non-linear inversion-recovery Look-Locker model `-L` to our single-shot data. We also exploit compressed sensing by adding a wavelet $l_1$ regularization with the `-l1` flag.
 <!-- #endregion -->
 
 ```python colab={"base_uri": "https://localhost:8080/"} id="UhHVvVzayuNe" outputId="34652ab3-d75f-4261-c902-30d39556cdc2"
@@ -357,7 +368,9 @@ head -n2 TI.hdr''
 ```
 
 <!-- #region id="qfvQ9Li1O52S" -->
-3.2 Visualize results
+#### 3.2 Visualize results
+
+To visualize the output of the reconstruction we resize it and thus remove the applied oversampling. Additionally, we slice the individual maps out of its original file and place them next to each other for the final visualization.
 <!-- #endregion -->
 
 ```python colab={"base_uri": "https://localhost:8080/", "height": 368} id="ug79lA2NyuNe" outputId="255cfc92-27d6-4c4c-cf7a-31d5a62ede0b"
@@ -372,11 +385,14 @@ head -n2 TI.hdr''
 !bart flip $(bart bitmask 0) tmp maps_all
 
 !bart toimg -W maps_all maps_all.png
+
+from IPython.display import Image
 Image("maps_all.png", width=1000)
 ```
 
 <!-- #region id="lY7X_ELPyuNf" -->
-Finally, from the above parameters, we can calculate and visualize the estimated T1 map.
+The output of the nonlinear Look-Locker model-based reconstruction are the parameter maps Mss, M0 and R1*.  
+To estimate the desired T1 map we pass the reconstruction results to the `looklocker` command and visualize the T1 map here.
 <!-- #endregion -->
 
 ```python colab={"base_uri": "https://localhost:8080/", "height": 467} id="uj6WjnWOyuNf" outputId="277688a3-83e8-48f5-ab51-64ba23fe04e6"
@@ -386,10 +402,6 @@ Finally, from the above parameters, we can calculate and visualize the estimated
 !python3 save_maps.py moba_T1map viridis 0 2.0 moba_T1map.png
 Image("moba_T1map.png", width=600)
 ```
-
-<!-- #region id="nDmp8EroyuNf" -->
-Thank you for joining! Feel free to ask any questions:)
-<!-- #endregion -->
 
 <!-- #region id="FbOHw18nyuNg" -->
 # Part II. Model-based Reconstruction on Multi-Echo Radial FLASH
@@ -414,7 +426,7 @@ Wang X, Tan Z, Scholand N, Roeloffs V, Uecker M. [Physics-based reconstruction m
 
 ![](https://github.com/mrirecon/bart-workshop/blob/master/ismrm2021/model_based/ME_FLASH.png?raw=1)
 > Multiple gradient echoes are acquired after each RF excitation. 
-> Every echo samples different *k*-space radial spoke with the use of triangular blip gradients.
+> Every echo sample follows a different radial *k*-space spoke by application of triangular blip gradients between the acquisitions.
 
 ### 2. Signal Modeling In the Case of Three-Echo Acquisition
 
@@ -424,11 +436,11 @@ $\rho_m = \big( \text{W} + \text{F} \cdot z_m \big) \cdot e^{i 2\pi f_{B_0} \tex
 
 with $\text{W}$ and $\text{F}$ being the water and fat images, and $f_{B_0}$ the $B_0$ field inhomogeneity map. The fat chemical shift phase modulation $z_m = \sum_{p=1}^6 \alpha_p e^{i2\pi f_p \text{TE}_m}$.
 
-As shown previously in the software session, this signal model (implemented as a nonlinear operator in BART) can be chained with the parallel imaging model, and the complete unknown $x = (\text{W}, \text{F}, f_{B_0}, c_1, \cdots, c_N)^T$, where $c_j$ represents the coil sensitivity map.
+As shown previously in the software sessions introduction, this signal model (implemented as a nonlinear operator) can be chained with the parallel imaging model, combining the tissue characteristic unknowns with the coil sensitivity maps $c_j$ to: $x = (\text{W}, \text{F}, f_{B_0}, c_1, \cdots, c_N)^T$. Thus, we created a calibration-less model-based reconstruction.
 <!-- #endregion -->
 
 <!-- #region id="Su7OA772yuNh" -->
-### Step 1. Get the Raw Data
+#### 2.1 Get the Raw Data
 We downloaded all supporting materials already in the [previous section](#download-materials).  
 Let us check the dimensions of our raw data:
 <!-- #endregion -->
@@ -439,7 +451,7 @@ head -n2 ME-FLASH-5-cc.hdr
 ```
 
 <!-- #region id="Hkf4QP8myuNi" -->
-### Step 2. Prepare Raw Data for Image Reconstruction in BART
+#### 2.2 Raw Data Preparation for Image Reconstruction
 <!-- #endregion -->
 
 <!-- #region id="3zBaWmmHyuNi" -->
@@ -517,7 +529,7 @@ bart reshape $(bart bitmask 2 10) $((SPOKES * FRAMES)) 1 traj_3eco traj_part
 ```
 
 <!-- #region id="GY2PY3jWyuNj" -->
-**Water/fat separation and $B_0$ field mapping via model-based reconstruction**
+#### 2.3 Water/Fat Separation and $B_0$ Field Mapping via Model-based Reconstruction
 <!-- #endregion -->
 
 ```python colab={"base_uri": "https://localhost:8080/"} id="lsgih0Z1yuNj" outputId="98108511-b0d5-4381-b3ea-3df7c2066a40"
@@ -538,7 +550,7 @@ bart reshape $(bart bitmask 2 10) $((SPOKES * FRAMES)) 1 traj_3eco traj_part
 ```
 
 <!-- #region id="CqmqOcmSyuNj" -->
-**2.4 Visualization**
+#### 2.4 Visualization
 
 - **Display model-based reconstructed $\text{W}$, $\text{F}$ and $f_{B_0}$ maps**
 <!-- #endregion -->
