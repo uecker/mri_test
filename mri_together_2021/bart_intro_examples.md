@@ -65,6 +65,8 @@ MyBinder and Google Colaboratory allow us to run a Jupyter instance through a br
 import sys, os
 
 os.environ['COLAB'] = 'true' if ('google.colab' in sys.modules) else 'false'
+
+# FIXME: Colab without GPU not supported yet
 os.environ['CUDA'] = '1' if ('google.colab' in sys.modules) else '0'
 ```
 
@@ -1011,7 +1013,6 @@ bart fmac -C -s$COIL_FLAG tmp/coil_image coils_l tmp/image
 
 # PICS l1
 bart pics -S -l1 -r0.001 -pdata/pattern_po_4 kspace coils_l tmp/pics_reco_l
-#resize (frequency oversampling)
 
 # Zero-filled
 bart fft -i -u $FFT_FLAG kspace tmp/coil_image_zf
@@ -1061,6 +1062,10 @@ We use the pretrained weights provided in the weights directory. They have been 
 ```bash id="xVg4RtKoDwX1" colab={"base_uri": "https://localhost:8080/"} outputId="9cb99c19-a6f1-40a6-9d39-732a86c907a2"
 
 [ $CUDA ] && GPU=--gpu; # if BART is compiled with gpu support, we add the --gpu option
+
+# Use updated weights to avoid error
+# https://gitlab.gwdg.de/AG_Uecker/scripts_deepdeeplearning/-/blob/master/12_varnet/20201117_164101_default/11_weights
+# Not included into downloaded files above yet
 
 bart reconet \
     $GPU \
@@ -1157,6 +1162,10 @@ plt.show()
 
 # if BART is compiled with gpu support, we add the --gpu option
 [ $CUDA ] && GPU=--gpu;
+
+# Use updated weights to avoid error
+# https://gitlab.gwdg.de/AG_Uecker/scripts_deepdeeplearning/-/blob/master/12_varnet/20201117_164101_default/11_weights
+# Not included into downloaded files above yet
 
 bart reconet \
     $GPU \
