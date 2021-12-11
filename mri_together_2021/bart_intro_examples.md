@@ -1,7 +1,6 @@
 ---
 jupyter:
   jupytext:
-    formats: ipynb,md
     text_representation:
       extension: .md
       format_name: markdown
@@ -659,7 +658,7 @@ plot_map("subspace_maps1", "viridis", 0, 1, '')
 <!-- #region id="_-JV1PCDpbvW" -->
 ### Model-Based T1 Mapping
 
-A specialized tutorial for model-based reconstructions in BART can be found in the [Webinar Material of the ISMRM of 2021](https://github.com/mrirecon/bart-workshop/tree/master/ismrm2021).
+A specialized tutorial for model-based reconstructions in BART can be found in the [Workshop Material of the ISMRM 2021](https://github.com/mrirecon/bart-workshop/tree/master/ismrm2021).
 <!-- #endregion -->
 
 <!-- #region id="sDOZbCGHDwXm" -->
@@ -904,7 +903,7 @@ plot_map("moba_T1map", "viridis", 0, 2, '$T_1$ / s')
 <!-- #region id="xA8ldOwuDwXv" -->
 ### BART for Machine Learning - Reconstruction Networks
 
-A specialized tutorial for neural networks in BART can be found in the [Webinar Material of the ISMRM of 2021](https://github.com/mrirecon/bart-workshop/tree/master/ismrm2021).
+A specialized tutorial for neural networks in BART can be found in the [Workshop Material of the ISMRM 2021](https://github.com/mrirecon/bart-workshop/tree/master/ismrm2021).
 <!-- #endregion -->
 
 <!-- #region id="9GUPKERGrFnr" -->
