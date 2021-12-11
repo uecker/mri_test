@@ -69,7 +69,7 @@ os.environ['COLAB'] = 'true' if ('google.colab' in sys.modules) else 'false'
 os.environ['CUDA'] = '1' if ('google.colab' in sys.modules) else '0'
 ```
 
-```bash colab={"base_uri": "https://localhost:8080/"} id="u5ylS2IpDwXM" outputId="e0b7945f-321e-40b7-debe-d9293604aa63"
+```bash id="u5ylS2IpDwXM" colab={"base_uri": "https://localhost:8080/"} outputId="e0b7945f-321e-40b7-debe-d9293604aa63"
 
 # Prepare GPUs if on Google Colab
 
@@ -119,7 +119,7 @@ apt-get install -y make gcc libfftw3-dev liblapacke-dev libpng-dev libopenblas-d
 git clone https://github.com/mrirecon/bart/ bart &> /dev/null
 ```
 
-```bash colab={"base_uri": "https://localhost:8080/"} id="tDWAtWn0DwXP" outputId="221632f8-8f4a-4b77-d9f5-2921797e9d80"
+```bash id="tDWAtWn0DwXP" colab={"base_uri": "https://localhost:8080/"} outputId="221632f8-8f4a-4b77-d9f5-2921797e9d80"
 
 # Choose a branch to work on
 BRANCH=master
@@ -147,7 +147,7 @@ make &> /dev/null
 After downloading and compiling BART, we set the required `TOOLBOX_PATH` variable pointing to the BART instance:
 <!-- #endregion -->
 
-```python colab={"base_uri": "https://localhost:8080/"} id="39Yu9PaEDwXR" outputId="7fa57042-57ba-439e-f9aa-52f08b43a8f2"
+```python id="39Yu9PaEDwXR" colab={"base_uri": "https://localhost:8080/"} outputId="7fa57042-57ba-439e-f9aa-52f08b43a8f2"
 %env TOOLBOX_PATH=bart
 ```
 
@@ -166,7 +166,7 @@ sys.path.append(os.environ['TOOLBOX_PATH'] + "/python/")
 Check BART setup:
 <!-- #endregion -->
 
-```bash colab={"base_uri": "https://localhost:8080/"} id="SQAZz46ODwXW" outputId="8c5de119-d71c-4ca8-e739-fd482ee855e4"
+```bash id="SQAZz46ODwXW" colab={"base_uri": "https://localhost:8080/"} outputId="8c5de119-d71c-4ca8-e739-fd482ee855e4"
 
 echo "# The BART used in this notebook:"
 which bart
@@ -259,7 +259,7 @@ head -n2 ${name}.hdr
 BART provides a number of tools for MRI image reconstruction and multi-dimensional array manipulation.
 <!-- #endregion -->
 
-```python colab={"base_uri": "https://localhost:8080/"} id="dM-uW8dEDwXZ" outputId="ba3d6db4-715d-4dd2-ee9e-2a9bdcc238c6"
+```python id="dM-uW8dEDwXZ" colab={"base_uri": "https://localhost:8080/"} outputId="ba3d6db4-715d-4dd2-ee9e-2a9bdcc238c6"
 # get a list of BART commands by running bart with no arguments:
 ! bart
 ```
@@ -276,7 +276,7 @@ To see all options and requirements of a command, use the `-h` flag:
 
 <!-- #endregion -->
 
-```python colab={"base_uri": "https://localhost:8080/"} id="YF-P7oMEDwXc" outputId="fbee4e6f-0b5e-4678-80be-9a3e86a82b53"
+```python id="YF-P7oMEDwXc" colab={"base_uri": "https://localhost:8080/"} outputId="fbee4e6f-0b5e-4678-80be-9a3e86a82b53"
 # Obtain help for each command (-h)
 ! bart toimg -h
 ```
@@ -293,7 +293,7 @@ As we can see, there are many CLI tools available. The full descriptions of each
 As a first example, let's create a Shepp-Logan numerical phantom in k-space. We will use the `phantom` tool. Before using the tool, let's look at its options
 <!-- #endregion -->
 
-```python colab={"base_uri": "https://localhost:8080/"} id="mdwlVvNMDwXe" outputId="d0afa983-0938-4578-952a-391b256213bf"
+```python id="mdwlVvNMDwXe" colab={"base_uri": "https://localhost:8080/"} outputId="d0afa983-0938-4578-952a-391b256213bf"
 ! bart phantom -h
 ```
 
@@ -301,7 +301,7 @@ As a first example, let's create a Shepp-Logan numerical phantom in k-space. We 
 The `phantom` tool includes the option `-k` to create it directly in k-space, and `-x` to specify the dimensions.
 <!-- #endregion -->
 
-```python colab={"base_uri": "https://localhost:8080/", "height": 275} id="G4IikpLXDwXe" outputId="bc41079f-0ff2-4ae1-e03a-391088acf06e"
+```python id="G4IikpLXDwXe" colab={"base_uri": "https://localhost:8080/", "height": 275} outputId="bc41079f-0ff2-4ae1-e03a-391088acf06e"
 # Create Cartesian k-space phantom (256 samples)
 ! bart phantom -x 256 -k shepp_logan
 
@@ -322,7 +322,7 @@ The header file is a raw text file and can be opened with any text editor. The c
 Because the header file is a text file, we can directly print it:
 <!-- #endregion -->
 
-```python colab={"base_uri": "https://localhost:8080/"} id="DWONQd_zDwXf" outputId="adf9f78d-465c-4fa8-e87d-739fcdee0bed"
+```python id="DWONQd_zDwXf" colab={"base_uri": "https://localhost:8080/"} outputId="adf9f78d-465c-4fa8-e87d-739fcdee0bed"
 ! cat shepp_logan.hdr
 ```
 
@@ -330,7 +330,7 @@ Because the header file is a text file, we can directly print it:
 Although not discussed here, BART can write to other file formats, including a simple H5 container, ISMRMRD format, and others. Therefore, not every format will include a header file. Thus, it is better to use the `show` command.
 <!-- #endregion -->
 
-```python colab={"base_uri": "https://localhost:8080/"} id="cx6g7E2sDwXg" outputId="abf89506-570d-4820-ae93-01d5cb0c02db"
+```python id="cx6g7E2sDwXg" colab={"base_uri": "https://localhost:8080/"} outputId="abf89506-570d-4820-ae93-01d5cb0c02db"
 ! bart show -h
 ```
 
@@ -340,7 +340,7 @@ We can look at an individual dimension of the data with the `-d` command, or we 
 Next, we show the dimensions of the created Shepp-Logan phantom
 <!-- #endregion -->
 
-```python colab={"base_uri": "https://localhost:8080/"} id="GQFw_AUGDwXh" outputId="51d18286-5fdb-408c-e863-4f3bcd0dd596"
+```python id="GQFw_AUGDwXh" colab={"base_uri": "https://localhost:8080/"} outputId="51d18286-5fdb-408c-e863-4f3bcd0dd596"
 ! bart show -m shepp_logan
 ```
 
@@ -362,7 +362,7 @@ Therefore, we perform a Fast Fourier Transform (FFT).
 BART has an `fft` tool for doing just that.
 <!-- #endregion -->
 
-```python colab={"base_uri": "https://localhost:8080/", "height": 275} id="7IinGE42DwXi" outputId="1876b694-0836-4490-94d8-b314a7b4e55e"
+```python id="7IinGE42DwXi" colab={"base_uri": "https://localhost:8080/", "height": 275} outputId="1876b694-0836-4490-94d8-b314a7b4e55e"
 # Perform FFT reconstruction
 ! bart fft -u -i 3 shepp_logan shepp_logan_rec
 
@@ -374,7 +374,7 @@ plot_map("shepp_logan_rec", "viridis", 0, 0.005, '')
 Let's see the fft-options.
 <!-- #endregion -->
 
-```python colab={"base_uri": "https://localhost:8080/"} id="R7S8Vs6QDwXk" outputId="7435409a-9a6d-4fdd-d008-ca61c319303c"
+```python id="R7S8Vs6QDwXk" colab={"base_uri": "https://localhost:8080/"} outputId="7435409a-9a6d-4fdd-d008-ca61c319303c"
 # Show help for fft command
 ! bart fft -h
 ```
@@ -394,7 +394,7 @@ $ \text{bitmask}=2^{~0} + 2^{~1} = 3$
 BART also provides a command-line tool to calculate the bitmasks for specific dimensions.
 <!-- #endregion -->
 
-```python colab={"base_uri": "https://localhost:8080/"} id="w_Lgk8REDwXl" outputId="c795592b-810d-4e6c-d8e9-64c9eff0f8d9"
+```python id="w_Lgk8REDwXl" colab={"base_uri": "https://localhost:8080/"} outputId="c795592b-810d-4e6c-d8e9-64c9eff0f8d9"
 # Calculate bitmask for active dimensions 0 and 1
 ! bart bitmask 0 1
 ```
@@ -407,6 +407,10 @@ BART also provides a command-line tool to calculate the bitmasks for specific di
 <!-- #region id="ePpy5MiNtR7d" -->
 ### Subspace T1 Mapping
 
+A specialized tutorial for subspace T1 mapping with BART can be found in the [3rd BART Webinar Materials](https://github.com/mrirecon/bart-webinars/tree/master/webinar3).
+<!-- #endregion -->
+
+<!-- #region id="yz7rE-BLKwAd" -->
 We start by importing the characteristics of the downloaded IR-FLASH dataset following BARTs dimensionality definitions.
 <!-- #endregion -->
 
@@ -654,6 +658,8 @@ plot_map("subspace_maps1", "viridis", 0, 1, '')
 
 <!-- #region id="_-JV1PCDpbvW" -->
 ### Model-Based T1 Mapping
+
+A specialized tutorial for model-based reconstructions in BART can be found in the [Webinar Material of the ISMRM of 2021](https://github.com/mrirecon/bart-workshop/tree/master/ismrm2021).
 <!-- #endregion -->
 
 <!-- #region id="sDOZbCGHDwXm" -->
@@ -712,7 +718,7 @@ For further information have a look into:
 Magn Reson Med 2018;79:730-740.
 <!-- #endregion -->
 
-```python colab={"base_uri": "https://localhost:8080/"} id="OvICvnDSDwXn" outputId="cc2ba67b-9ec1-436d-882b-ba491772caa6"
+```python id="OvICvnDSDwXn" colab={"base_uri": "https://localhost:8080/"} outputId="cc2ba67b-9ec1-436d-882b-ba491772caa6"
 ! bart moba -h
 ```
 
@@ -749,7 +755,7 @@ We will compress our dataset to
 coils. This is for the purpose of fast computation, for a better performance, 8 or 10 are recommended.
 <!-- #endregion -->
 
-```bash colab={"base_uri": "https://localhost:8080/"} id="PeTLm8ZADwXo" outputId="a180198f-1ffa-413b-dc67-e7a54991bfb0"
+```bash id="PeTLm8ZADwXo" colab={"base_uri": "https://localhost:8080/"} outputId="a180198f-1ffa-413b-dc67-e7a54991bfb0"
 
 ## Coil compression
 bart transpose 0 1 IR-FLASH ksp
@@ -762,7 +768,7 @@ bart cc -A -p $NUM_VCOILS ksp ksp_cc
 #### Trajectory Preparation with Gradient Delay Correction
 <!-- #endregion -->
 
-```bash colab={"base_uri": "https://localhost:8080/"} id="nQ8GLGjuDwXp" outputId="648bb7fb-ea8d-4039-ce09-02ce908c5bbf"
+```bash id="nQ8GLGjuDwXp" colab={"base_uri": "https://localhost:8080/"} outputId="648bb7fb-ea8d-4039-ce09-02ce908c5bbf"
 
 ## Prepare radial trajectory (golden-angle)
 bart traj -r -c -D -G -x$READ -y$SPOKES -s7 -t$REP traj
@@ -789,7 +795,7 @@ bart traj -r -c -D -G -x$READ -y$SPOKES -s7 -t$REP -q $GDELAY trajn
 #### Preparation of Time Vector
 <!-- #endregion -->
 
-```bash colab={"base_uri": "https://localhost:8080/"} id="vuS4vYCJDwXq" outputId="fcae9c32-f58c-438c-9014-b202b0ec555b"
+```bash id="vuS4vYCJDwXq" colab={"base_uri": "https://localhost:8080/"} outputId="fcae9c32-f58c-438c-9014-b202b0ec555b"
 
 ## Prepare time vector
 TR=4100 #TR in [us]
@@ -833,7 +839,7 @@ A detailed description of the reconstruction can be also found in the [3rd event
 Here we apply a non-linear inversion-recovery Look-Locker model `-L` to our single-shot data. We also exploit compressed sensing by adding a wavelet $l_1$ regularization with the `-l1` flag.
 <!-- #endregion -->
 
-```bash colab={"base_uri": "https://localhost:8080/"} id="L2qNDbGaDwXs" outputId="9536fbf6-39ee-457e-9782-a4d25ad02acd"
+```bash id="L2qNDbGaDwXs" colab={"base_uri": "https://localhost:8080/"} outputId="9536fbf6-39ee-457e-9782-a4d25ad02acd"
 
 [ $CUDA ] && GPU=-g
 
@@ -857,7 +863,7 @@ bart moba -L $GPU -d4 -l1 -i8 -C100 -j0.09 -B0.0 -n -t traj_moba1 ksp_cc_moba1 T
 To visualize the output of the reconstruction we resize it and thus remove the applied oversampling. Additionally, we slice the individual maps out of its original file and place them next to each other for the final visualization.
 <!-- #endregion -->
 
-```python colab={"base_uri": "https://localhost:8080/", "height": 322} id="-XqJxYsEDwXt" outputId="9802b3c3-17b9-4af1-dd87-eae1d7ba8aa6"
+```python id="-XqJxYsEDwXt" colab={"base_uri": "https://localhost:8080/", "height": 322} outputId="9802b3c3-17b9-4af1-dd87-eae1d7ba8aa6"
 # Remove oversampling on maps Mss, M0, R1s
 ! bart resize -c 0 $((READ/2)) 1 $((READ/2)) reco_moba reco_maps
 
@@ -898,7 +904,7 @@ plot_map("moba_T1map", "viridis", 0, 2, '$T_1$ / s')
 <!-- #region id="xA8ldOwuDwXv" -->
 ### BART for Machine Learning - Reconstruction Networks
 
-
+A specialized tutorial for neural networks in BART can be found in the [Webinar Material of the ISMRM of 2021](https://github.com/mrirecon/bart-workshop/tree/master/ismrm2021).
 <!-- #endregion -->
 
 <!-- #region id="9GUPKERGrFnr" -->
@@ -934,11 +940,11 @@ $$
 To **train**, **evaluate** or **apply** unrolled networks, we provide the `bart reconet` command. It follows the same logic as the `bart nnet` command but gets the coil sensitivity maps as an additional input. Let us look at the help:
 <!-- #endregion -->
 
-```python colab={"base_uri": "https://localhost:8080/"} id="gtzNi5vpDwXv" outputId="15948ab5-613c-42a3-ffa9-fc36bf8da3d1"
+```python id="gtzNi5vpDwXv" colab={"base_uri": "https://localhost:8080/"} outputId="15948ab5-613c-42a3-ffa9-fc36bf8da3d1"
 ! bart reconet -h
 ```
 
-```python colab={"base_uri": "https://localhost:8080/"} id="h2T5krOSDwXw" outputId="3334c1fe-ea5e-4b2b-b4c1-ad505a4f8829"
+```python id="h2T5krOSDwXw" colab={"base_uri": "https://localhost:8080/"} outputId="3334c1fe-ea5e-4b2b-b4c1-ad505a4f8829"
 ! bart reconet --network h
 ```
 
@@ -954,7 +960,7 @@ Before we apply the networks, we will create/estimate:
 + a ground truth reference
 <!-- #endregion -->
 
-```python colab={"base_uri": "https://localhost:8080/", "height": 408} id="7HvKWTioDwXw" outputId="cfb8799e-80d1-4dcc-99ab-76edef2cfcfe"
+```python id="7HvKWTioDwXw" colab={"base_uri": "https://localhost:8080/", "height": 408} outputId="cfb8799e-80d1-4dcc-99ab-76edef2cfcfe"
 ! echo $'\n# K-Space (fully sampled):'
 ! head -n2 data/kspace_fs.hdr
 
@@ -982,7 +988,7 @@ We downsample the fully-sampled kspace by multiplying it with the sampling patte
 We estimate the coil sensitivity maps using ESPIRiT. 
 <!-- #endregion -->
 
-```python colab={"base_uri": "https://localhost:8080/"} id="dWOcX0FUDwXy" outputId="91f2107d-1d8e-468c-ea97-a7385b7c7870"
+```python id="dWOcX0FUDwXy" colab={"base_uri": "https://localhost:8080/"} outputId="91f2107d-1d8e-468c-ea97-a7385b7c7870"
 ! bart ecalib -r24 -m1 kspace coils_l
 ! bart resize -c 0 320 coils_l coils
 ```
@@ -993,7 +999,7 @@ We estimate the coil sensitivity maps using ESPIRiT.
 We construct the **ground truth reference** as the coil-combinded reconstruction of the fully-sampled kspace data. For comparison, we also compute a **l1-wavelet** regularized and the **zero-filled** reconstruction.
 <!-- #endregion -->
 
-```bash colab={"base_uri": "https://localhost:8080/"} id="g5l3sB0UDwXz" outputId="54ac33f1-d57c-4dc0-be39-56db6075d250"
+```bash id="g5l3sB0UDwXz" colab={"base_uri": "https://localhost:8080/"} outputId="54ac33f1-d57c-4dc0-be39-56db6075d250"
 
 mkdir -p tmp
 
@@ -1024,7 +1030,7 @@ rm -r tmp
 We show the results:
 <!-- #endregion -->
 
-```python colab={"base_uri": "https://localhost:8080/", "height": 464} id="Pt06m9cUDwX0" outputId="881a16eb-c4e1-4fc3-db7b-edec0cff71b4"
+```python id="Pt06m9cUDwX0" colab={"base_uri": "https://localhost:8080/", "height": 464} outputId="881a16eb-c4e1-4fc3-db7b-edec0cff71b4"
 ref = cfl.readcfl("ref")
 pics_reco = cfl.readcfl("pics_reco")
 zero_filled = cfl.readcfl("zero_filled")
@@ -1053,7 +1059,7 @@ Having prepared the dataset, we can apply the Variational Network using the down
 We use the pretrained weights provided in the weights directory. They have been trained on the first 15 knees from the coronal_pd_fs directory of the NYU-Dataset
 <!-- #endregion -->
 
-```bash colab={"base_uri": "https://localhost:8080/"} id="xVg4RtKoDwX1" outputId="9cb99c19-a6f1-40a6-9d39-732a86c907a2"
+```bash id="xVg4RtKoDwX1" colab={"base_uri": "https://localhost:8080/"} outputId="9cb99c19-a6f1-40a6-9d39-732a86c907a2"
 
 [ $CUDA ] && GPU=--gpu; # if BART is compiled with gpu support, we add the --gpu option
 
@@ -1073,7 +1079,7 @@ bart reconet \
 We plot the results:
 <!-- #endregion -->
 
-```python colab={"base_uri": "https://localhost:8080/", "height": 464} id="qXfmNgJADwX1" outputId="7f27ea83-d7da-45dd-ccae-b9eadf1a6b01"
+```python id="qXfmNgJADwX1" colab={"base_uri": "https://localhost:8080/", "height": 464} outputId="7f27ea83-d7da-45dd-ccae-b9eadf1a6b01"
 ref = cfl.readcfl("ref")
 pics_reco = cfl.readcfl("pics_reco")
 varnet = cfl.readcfl("varnet")
@@ -1101,7 +1107,7 @@ plt.show()
 Similarly, MoDL can be applied using the provided weights. Here, we unroll 5 iterations.
 <!-- #endregion -->
 
-```bash colab={"base_uri": "https://localhost:8080/"} id="ogSm6QC8DwX2" outputId="c4014778-c2bf-4648-bb3e-775c4fdcc718"
+```bash id="ogSm6QC8DwX2" colab={"base_uri": "https://localhost:8080/"} outputId="c4014778-c2bf-4648-bb3e-775c4fdcc718"
 
 [ $CUDA ] && GPU=--gpu; # if BART is compiled with gpu support, we add the --gpu option
 
@@ -1122,7 +1128,7 @@ bart reconet \
 We plot the results:
 <!-- #endregion -->
 
-```python colab={"base_uri": "https://localhost:8080/", "height": 464} id="8Yyfi3DEDwX2" outputId="4d72e0ed-3543-48ef-eeb5-523dfe2501b1"
+```python id="8Yyfi3DEDwX2" colab={"base_uri": "https://localhost:8080/", "height": 464} outputId="4d72e0ed-3543-48ef-eeb5-523dfe2501b1"
 ref = cfl.readcfl("ref")
 pics_reco = cfl.readcfl("pics_reco")
 modl = cfl.readcfl("modl")
@@ -1148,7 +1154,7 @@ plt.show()
 #### Evaluation of the Variational Network and MoDL
 <!-- #endregion -->
 
-```bash colab={"base_uri": "https://localhost:8080/"} id="81wG5LfgDwX3" outputId="d500337f-959c-4d55-fbfb-9e9502c51445"
+```bash id="81wG5LfgDwX3" colab={"base_uri": "https://localhost:8080/"} outputId="d500337f-959c-4d55-fbfb-9e9502c51445"
 
 # if BART is compiled with gpu support, we add the --gpu option
 [ $CUDA ] && GPU=--gpu;
@@ -1165,7 +1171,7 @@ bart reconet \
     ref 
 ```
 
-```bash colab={"base_uri": "https://localhost:8080/"} id="4NayUikFDwX3" outputId="c83a0ac9-a4ff-4262-aeed-a8b227cbcbb5"
+```bash id="4NayUikFDwX3" colab={"base_uri": "https://localhost:8080/"} outputId="c83a0ac9-a4ff-4262-aeed-a8b227cbcbb5"
 
 # if BART is compiled with gpu support, we add the --gpu option
 [ $CUDA ] && GPU=--gpu;
