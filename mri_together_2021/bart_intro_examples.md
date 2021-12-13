@@ -1084,7 +1084,13 @@ We use the pretrained weights provided in the weights directory. They have been 
 
 ```bash id="xVg4RtKoDwX1" colab={"base_uri": "https://localhost:8080/"} outputId="9cb99c19-a6f1-40a6-9d39-732a86c907a2"
 
-[ $CUDA ] && GPU=--gpu; # if BART is compiled with gpu support, we add the --gpu option
+# if BART is compiled with gpu support, we add the --gpu option
+if $COLAB;
+then
+    GPU=--gpu;
+else
+    GPU=''
+fi
 
 bart reconet \
     $GPU \
@@ -1132,7 +1138,13 @@ Similarly, MoDL can be applied using the provided weights. Here, we unroll 5 ite
 
 ```bash id="ogSm6QC8DwX2" colab={"base_uri": "https://localhost:8080/"} outputId="c4014778-c2bf-4648-bb3e-775c4fdcc718"
 
-[ $CUDA ] && GPU=--gpu; # if BART is compiled with gpu support, we add the --gpu option
+# if BART is compiled with gpu support, we add the --gpu option
+if $COLAB;
+then
+    GPU=--gpu;
+else
+    GPU=''
+fi
 
 bart reconet \
     $GPU \
@@ -1180,7 +1192,12 @@ plt.show()
 ```bash id="81wG5LfgDwX3" colab={"base_uri": "https://localhost:8080/"} outputId="d500337f-959c-4d55-fbfb-9e9502c51445"
 
 # if BART is compiled with gpu support, we add the --gpu option
-[ $CUDA ] && GPU=--gpu;
+if $COLAB;
+then
+    GPU=--gpu;
+else
+    GPU=''
+fi
 
 bart reconet \
     $GPU \
@@ -1197,7 +1214,12 @@ bart reconet \
 ```bash id="4NayUikFDwX3" colab={"base_uri": "https://localhost:8080/"} outputId="c83a0ac9-a4ff-4262-aeed-a8b227cbcbb5"
 
 # if BART is compiled with gpu support, we add the --gpu option
-[ $CUDA ] && GPU=--gpu;
+if $COLAB;
+then
+    GPU=--gpu;
+else
+    GPU=''
+fi
 
 bart reconet \
     $GPU \
