@@ -112,36 +112,44 @@ Here we install BARTs dependencies, we download the current repository from gith
 
 ```bash id="KYpxLsEEDwXN"
 
-# Install BARTs dependencies
-apt-get install -y make gcc libfftw3-dev liblapacke-dev libpng-dev libopenblas-dev &> /dev/null
+# MyBinder will have BART installed in the background
+if $COLAB;
+then
+  # Install BARTs dependencies
+  apt-get install -y make gcc libfftw3-dev liblapacke-dev libpng-dev libopenblas-dev &> /dev/null
 
-# Clone Bart
-[ -d /content/bart ] && rm -r /content/bart
-git clone https://github.com/mrirecon/bart/ bart &> /dev/null
+  # Clone Bart
+  [ -d /content/bart ] && rm -r /content/bart
+  git clone https://github.com/mrirecon/bart/ bart &> /dev/null
+fi
 ```
 
 ```bash id="tDWAtWn0DwXP" colab={"base_uri": "https://localhost:8080/"} outputId="221632f8-8f4a-4b77-d9f5-2921797e9d80"
 
-# Choose a branch to work on
-BRANCH=master
+# MyBinder will have BART installed in the background
+if $COLAB;
+then
+  # Choose a branch to work on
+  BRANCH=master
 
-cd bart
+  cd bart
 
-# Switch to desired branch of the BART project
-git checkout $BRANCH
+  # Switch to desired branch of the BART project
+  git checkout $BRANCH
 
-# Define specifications 
-COMPILE_SPECS=" PARALLEL=1
-                CUDA=$CUDA
-                CUDA_BASE=/usr/local/cuda
-                CUDA_LIB=lib64
-                OPENBLAS=1
-                BLAS_THREADSAFE=1"
+  # Define specifications 
+  COMPILE_SPECS=" PARALLEL=1
+                  CUDA=$CUDA
+                  CUDA_BASE=/usr/local/cuda
+                  CUDA_LIB=lib64
+                  OPENBLAS=1
+                  BLAS_THREADSAFE=1"
 
-printf "%s\n" $COMPILE_SPECS > Makefiles/Makefile.local
+  printf "%s\n" $COMPILE_SPECS > Makefiles/Makefile.local
 
-# Compile BART
-make &> /dev/null
+  # Compile BART
+  make &> /dev/null
+fi
 ```
 
 <!-- #region id="GV-aQQg8DwXQ" -->
