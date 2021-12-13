@@ -16,4 +16,4 @@ each directory, and are summarized below. Each tutorial is set up as jupyter not
 Hands-On:
 - [Jupyter Notebook](./model_based/bart_moba.ipynb)
 - [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/scholand/bart-workshop/blob/test/mri_together_2021/bart_intro_examples.ipynb)
-
+- [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/scholand/bart-workshop/test?filepath=mri_together_2021/bart_intro_examples.ipynb)
