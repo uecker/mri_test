@@ -2,7 +2,7 @@
 
 This material will be presented at the ISMRM Together Workshop 2021.
 
-**Title**: A Hands-On Introduction to BART 
+**Title**: A Hands-On Introduction to BART  
 **Session**: Parallel Sessions C: Acquisition and Reconstruction   
 **Meeting**: [MRI Together - A global workshop on Open Science and Reproducible MR Research](https://mritogether.github.io/)  
 **Date**: December 15, 2021  
