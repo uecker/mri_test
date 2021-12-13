@@ -235,11 +235,8 @@ For this tutorial, we also need several supporting materials (figures, plotting 
 #FIXME: Combine
 
 # Download the required supporting material if it is not already there
-[ ! -f bart_moba.zip ] && wget -q https://github.com/mrirecon/bart-workshop/raw/master/ismrm2021/model_based/bart_moba.zip
-unzip -n bart_moba.zip
-
-[ ! -f data_weights.zip ] && wget -q https://github.com/mrirecon/bart-workshop/raw/master/ismrm2021/neural_networks/data_weights.zip
-unzip -n data_weights.zip
+[ ! -f data.zip ] && wget -q https://github.com/scholand/bart-workshop/raw/test/mri_together_2021/data.zip
+unzip -n data.zip
 
 # Download Raw Data for IR FLASH parts
 name=IR-FLASH
@@ -248,11 +245,12 @@ if [[ ! -f ${name} ]]; then
   echo Downloading ${name}
   wget -q https://zenodo.org/record/4060287/files/${name}.cfl
   wget -q https://zenodo.org/record/4060287/files/${name}.hdr
+
+  mv ${name}.cfl data/${name}.cfl
+  mv ${name}.hdr data/${name}.hdr
 fi
 
-# cat md5sum.txt | grep ${name} | md5sum -c --ignore-missing
-
-head -n2 ${name}.hdr
+head -n2 data/${name}.hdr
 ```
 
 <!-- #region id="5Gqo3SJqDwXZ" -->
@@ -416,7 +414,7 @@ We start by importing the characteristics of the downloaded IR-FLASH dataset fol
 <!-- #endregion -->
 
 ```python id="HUvJkSd53Cg0"
-dim = np.shape(cfl.readcfl("IR-FLASH"))
+dim = np.shape(cfl.readcfl("data/IR-FLASH"))
 
 os.environ['READ'] = str(dim[0])
 os.environ['SPOKES'] = str(dim[2])
@@ -510,7 +508,7 @@ To reduce the size of our dataset and therefore also decrease the computational 
 
 # Transpose the 0th and 1st dimension of the downloaded data
 # to ensure compatibility with BARTs non-Cartesian tools
-bart transpose 0 1 IR-FLASH ksp
+bart transpose 0 1 data/IR-FLASH ksp
 
 # Perform coil compression
 bart cc -A -p $NUM_VCOILS ksp ksp_cc
@@ -532,9 +530,9 @@ The timesteps are passed using `-t`, the spokes by `-y` and the samples are spec
 ```bash colab={"base_uri": "https://localhost:8080/"} id="C5LkG-ZPvFl0" outputId="74b3a174-5148-4f3d-cff4-4c94e60e5ba4"
 
 # Read file characteristics from downloaded dataset
-READ=`bart show -d 0 IR-FLASH`
-SPOKES=`bart show -d 2 IR-FLASH`
-REP=`bart show -d 10 IR-FLASH`
+READ=`bart show -d 0 data/IR-FLASH`
+SPOKES=`bart show -d 2 data/IR-FLASH`
+REP=`bart show -d 10 data/IR-FLASH`
 
 # Create the trajectory using the `traj` tool
 bart traj -r -c -D -G -x$READ -y$SPOKES -s$NUM_TGA -t$REP traj
@@ -608,6 +606,23 @@ NUM_ESPIRIT_MAP=1
 # Estimate coil sensitivities from gridded, steady-state k-space using `ecalib`
 bart ecalib -S -t $THRESHOLD -m $NUM_ESPIRIT_MAP ksp_grid sens_invivo
 
+```
+
+```python colab={"base_uri": "https://localhost:8080/"} id="S4XeKEJ9Mxpl" outputId="f6897682-f7f5-49f7-839f-ae280a8231b4"
+!cat sens_invivo.hdr
+```
+
+```python colab={"base_uri": "https://localhost:8080/", "height": 157} id="aBq-9xhMMX0-" outputId="4cc86828-c94a-493e-c2f3-9c9246358456"
+# Reshape and flip coefficient maps for improved visualization
+
+## Concentrate all coefficients in the column dimension (1st/phase1)
+! bart reshape $(bart bitmask 1 3) $((READ*NUM_VCOILS)) 1 sens_invivo sens_invivo_lin
+
+## Flip the map in row dimension to have the forhead pointing to the top of the page
+! bart flip $(bart bitmask 0) sens_invivo_lin sens_invivo_flip
+
+! echo "In-Vivo Sensitivity Maps"
+plot_map("sens_invivo_flip", "viridis", 0, 1, '')
 ```
 
 <!-- #region id="3AxOykoMwTps" -->
@@ -714,7 +729,7 @@ Therefore, we can directly estimate the MR parameter maps from undersampled k-sp
 
 For further information have a look into:
 
-[Wang X](mailto:xiaoqing.wang@med.uni-goettingen.de), Roeloffs V, Klosowski J, Tan Z, Voit D, Uecker M, Frahm J.,  
+> [Wang X](mailto:xiaoqing.wang@med.uni-goettingen.de), Roeloffs V, Klosowski J, Tan Z, Voit D, Uecker M, Frahm J.,  
 [Model-based T1 Mapping with Sparsity Constraints Using Single-Shot Inversion-Recovery Radial FLASH](https://onlinelibrary.wiley.com/doi/full/10.1002/mrm.26726).  
 Magn Reson Med 2018;79:730-740.
 <!-- #endregion -->
@@ -759,7 +774,7 @@ coils. This is for the purpose of fast computation, for a better performance, 8 
 ```bash id="PeTLm8ZADwXo" colab={"base_uri": "https://localhost:8080/"} outputId="a180198f-1ffa-413b-dc67-e7a54991bfb0"
 
 ## Coil compression
-bart transpose 0 1 IR-FLASH ksp
+bart transpose 0 1 data/IR-FLASH ksp
 
 # coil compression
 bart cc -A -p $NUM_VCOILS ksp ksp_cc
@@ -1012,7 +1027,7 @@ bart fft -i -u $FFT_FLAG data/kspace_fs tmp/coil_image
 bart fmac -C -s$COIL_FLAG tmp/coil_image coils_l tmp/image
 
 # PICS l1
-bart pics -S -l1 -r0.001 -pdata/pattern_po_4 kspace coils_l tmp/pics_reco_l
+bart pics -S -l1 -r0.001 -p data/pattern_po_4 kspace coils_l tmp/pics_reco_l
 
 # Zero-filled
 bart fft -i -u $FFT_FLAG kspace tmp/coil_image_zf
@@ -1063,10 +1078,6 @@ We use the pretrained weights provided in the weights directory. They have been 
 
 [ $CUDA ] && GPU=--gpu; # if BART is compiled with gpu support, we add the --gpu option
 
-# Use updated weights to avoid error
-# https://gitlab.gwdg.de/AG_Uecker/scripts_deepdeeplearning/-/blob/master/12_varnet/20201117_164101_default/11_weights
-# Not included into downloaded files above yet
-
 bart reconet \
     $GPU \
     --network=varnet \
@@ -1075,7 +1086,7 @@ bart reconet \
     --pattern=data/pattern_po_4 \
     kspace \
     coils \
-    weights/varnet \
+    data/varnet \
     varnet
 ```
 
@@ -1124,7 +1135,7 @@ bart reconet \
     --pattern=data/pattern_po_4 \
     kspace \
     coils \
-    weights/modl \
+    data/modl \
     modl
 ```
 
@@ -1163,10 +1174,6 @@ plt.show()
 # if BART is compiled with gpu support, we add the --gpu option
 [ $CUDA ] && GPU=--gpu;
 
-# Use updated weights to avoid error
-# https://gitlab.gwdg.de/AG_Uecker/scripts_deepdeeplearning/-/blob/master/12_varnet/20201117_164101_default/11_weights
-# Not included into downloaded files above yet
-
 bart reconet \
     $GPU \
     --network=varnet \
@@ -1175,7 +1182,7 @@ bart reconet \
     --pattern=data/pattern_po_4 \
     kspace \
     coils \
-    weights/varnet \
+    data/varnet \
     ref 
 ```
 
@@ -1193,7 +1200,7 @@ bart reconet \
     --pattern=data/pattern_po_4 \
     kspace \
     coils \
-    weights/modl \
+    data/modl \
     ref 
 ```
 
